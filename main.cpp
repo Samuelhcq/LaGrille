@@ -79,20 +79,6 @@ void affichageSolution (solution s, int t)
     // cout << endl << s.score << endl;
 }
 
-void genereSolution (solution & s, int t)
-{
-    srand(time(NULL));
-    char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
-    s.matrice = new char * [t]; 
-    for (int i = 0; i < t; ++i)
-    {
-         s.matrice[i] = new char [t]; 
-        for (int j = 0; j < t; ++j)
-        {
-            s.matrice[i][j] = lettres[rand() % 6];
-        }
-    }
-}
 bool valide (solution s, int t)
 {
     bool est_valide = false;
@@ -107,6 +93,26 @@ bool valide (solution s, int t)
     } while (!est_valide and i < t);
 
     return est_valide;
+}
+
+void genereSolution (solution & s, int t)
+{
+    srand(time(NULL));
+    char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
+
+    s.matrice = new char * [t];
+    for (int i = 0; i < t; ++i) s.matrice[i] = new char [t]; 
+    
+    do
+    {
+        for (int i = 0; i < t; ++i)
+        {
+            for (int j = 0; j < t; ++j)
+            {
+                s.matrice[i][j] = lettres[rand() % 6];
+            }
+        }
+    } while (!valide(s, t));
 }
 
 int main ()
