@@ -94,8 +94,8 @@ bool valide (solution s, int t)
         j = 0;
         ++i;
     }
-    if (r == 1) return true;
-    return false;
+    if (r != 1) return false;
+    return true;
 }
 
 void genereSolution (solution & s, int t)
@@ -106,8 +106,8 @@ void genereSolution (solution & s, int t)
     s.matrice = new char * [t];
     for (int i = 0; i < t; ++i) s.matrice[i] = new char [t]; 
     
-    // do
-    // {
+    do
+    {
         for (int i = 0; i < t; ++i)
         {
             for (int j = 0; j < t; ++j)
@@ -115,7 +115,7 @@ void genereSolution (solution & s, int t)
                 s.matrice[i][j] = lettres[rand() % 6];
             }
         }
-    // } while (!valide(s, t));
+    } while (!valide(s, t));
 }
 
 int main ()
