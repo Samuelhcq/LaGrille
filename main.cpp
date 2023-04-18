@@ -117,7 +117,7 @@ void genereSolution (solution & s, int t)
 
 int main ()
 {
-    string repertoire = "probleme_4_a.txt";
+    string repertoire = "problemes/probleme_4_a.txt";
     instance a;
     solution b;
 
