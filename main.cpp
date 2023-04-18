@@ -14,11 +14,11 @@ struct instance
 
 struct solution
 {
-    int score;
+    int taille,score;
     char ** matrice;
 };
 
-void initialisation (string ficA, instance & g)
+void initialisationInstance (string ficA, instance & g) // Initialise l'instance g avec ficA son adresse
 {
     ifstream fichier(ficA);
     if(fichier)
@@ -48,13 +48,6 @@ void suppressionInstance (instance g)
     delete[] g.matrice;
 }
 
-void suppressionSolution (instance g)
-{
-    for (int i = 0; i < g.taille; ++i)
-        delete[] g.matrice[i];
-    delete[] g.matrice;
-}
-
 void affichageInstance (instance g)
 {
     int t = g.taille;
@@ -68,10 +61,12 @@ void affichageInstance (instance g)
     }
 }
 
-void affichageSolution (solution s, int t)
+bool valideSolution(solution s)
 {
-    for (int i = 0; i < t; ++i)
+    int compteur_r=0,i=0,j=0;
+    while(i< s.taille and compteur_r<=1)
     {
+<<<<<<< Updated upstream
         cout << endl;
         for (int j = 0; j < t; ++j)
             cout << s.matrice[i][j] << ' ';
@@ -96,9 +91,20 @@ bool valide (solution s, int t)
     }
     if (r != 1) return false;
     return true;
+=======
+        if (s.matrice[i][j]== 'R')compteur_r++;
+        j++;
+        if (j==s.taille)
+        {
+            j=0;
+            ++i;
+        }
+    }
+    return compteur_r==1;
+>>>>>>> Stashed changes
 }
 
-void genereSolution (solution & s, int t)
+void genereSolution (solution & s,int t)
 {
     srand(time(NULL));
     char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
@@ -115,11 +121,65 @@ void genereSolution (solution & s, int t)
                 s.matrice[i][j] = lettres[rand() % 6];
             }
         }
-    } while (!valide(s, t));
+    } while (!valideSolution(s));
 }
 
+void affichageSolution (solution s)
+{
+    int t = s.taille;
+    for (int i = 0; i < t; ++i)
+    {
+        cout << endl;
+        for (int j = 0; j < t; ++j)
+            cout << s.matrice[i][j] << ' ';
+    }
+    // cout << endl << s.score << endl;
+}
+
+void suppressionSolution (solution g)
+{
+    for (int i = 0; i < g.taille; ++i)
+        delete[] g.matrice[i];
+    delete[] g.matrice;
+}
+
+void SaisieSolution(solution & s)
+{
+    cout<<"Quelle est la taille de la matrice solution ? ";
+    cin>>s.taille;
+    s.matrice = new char * [s.taille];
+    for (int i = 0; i < s.taille; ++i) s.matrice[i] = new char [s.taille];
+
+    for (int i = 0; i < s.taille; ++i)
+    {
+        for (int j = 0; j < s.taille; ++j)
+        {
+            cin>>s.matrice[i][j];
+        }
+    }
+}
+
+int calculpoint(instance g,solution s)
+{
+    int scoreTotal=0;
+
+    for (int i=0;i<s.taille;++i)
+    {
+        for (int i j=0;j<s.taille;++j)
+        {
+            val_case=g.matrice[i][j];
+            car_case=s.matrice[i][j];
+
+            if (car_case='J') //Jaune
+            {
+                
+            }
+        }
+    }
+}
 int main ()
 {
+<<<<<<< Updated upstream
     string repertoire = "instances hors-compétition (15)/probleme_4_a.txt";
     instance a;
     solution b;
@@ -130,5 +190,13 @@ int main ()
     affichageSolution(b, a.taille);
     cout << endl << valide(b, a.taille) << endl;
 
+=======
+    //string repertoire = "problemes/probleme_4_a.txt";
+    //instance a;
+    solution s;
+    SaisieSolution(s);
+    affichageSolution(s);
+    cout<<"Solution valide ?"<<valideSolution(s);
+>>>>>>> Stashed changes
     return 0;
 }
