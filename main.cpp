@@ -81,18 +81,21 @@ void affichageSolution (solution s, int t)
 
 bool valide (solution s, int t)
 {
-    bool est_valide = false;
-    int i = 0;
-    do
-    {
-        for (int j = 0; j < t; ++j)
-        {
-            if (s.matrice[i][j] == 'R') est_valide = true;
-        }
-        ++i;
-    } while (!est_valide and i < t);
+    int r = 0;
+    int i = 0, j = 0;
 
-    return est_valide;
+    while (r < 2 and i < t)
+    {
+        while (j < t)
+        {
+            if (s.matrice[i][j] == 'R') r++;
+            ++j;
+        }
+        j = 0;
+        ++i;
+    }
+    if (r != 1) return false;
+    return true;
 }
 
 void genereSolution (solution & s, int t)
@@ -117,13 +120,12 @@ void genereSolution (solution & s, int t)
 
 int main ()
 {
-    string repertoire = "problemes/probleme_4_a.txt";
+    string repertoire = "instances hors-compétition (15)/probleme_4_a.txt";
     instance a;
     solution b;
 
     initialisation(repertoire, a);
     affichageInstance(a);
-    suppressionInstance(a);
     genereSolution(b, a.taille);
     affichageSolution(b, a.taille);
     cout << endl << valide(b, a.taille) << endl;
