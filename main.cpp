@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <tuple>
 
 using namespace std;
 
@@ -74,9 +75,9 @@ bool valide (solution s)
         {
             if (s.matrice[i][j++] == 'R') r++;
         }
-        while (r < 2 and j < 4);
+        while (r < 2 and j < t);
 
-        if (r < 2)
+        if (r < 2) //On peut s'en passer si la grilles est grande
         {
             j = 0;
             ++i;
@@ -86,7 +87,7 @@ bool valide (solution s)
     return r == 1;
 }
 
-void genereSolution (solution & s, instance g)
+void genereSolutionAlea (solution & s, instance g)
 {
     int t = g.taille;
     s.taille = t;
@@ -121,7 +122,7 @@ void affichageSolution (solution s)
             cout << s.matrice[i][j] << ' ';
     }
     cout << endl;
-    // cout << endl << s.score << endl;
+    cout << endl << s.score << endl;
 }
 
 void suppressionSolution (solution & s)
@@ -133,7 +134,7 @@ void suppressionSolution (solution & s)
 
 //void saisieSolution(solution & s, instance g)
 //{
-//    t = g.taille;
+//    int t = g.taille;
 //    s.taille = t;
 //    
 //    s.matrice = new char * [t];
@@ -148,36 +149,169 @@ void suppressionSolution (solution & s)
 //    }
 //}
 
-// int calculeScore (instance g, solution s)
-// {
-//     int scoreTotal=0;
+bool pion_orthogonal(solution s,char l,int i,int j)
+{
+    if (i==0 and j==0) return (s.matrice[i+1][j]==l or s.matrice[i][j+1]==l);
+    if(i==0 and j==s.taille-1) return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+    if(i==s.taille-1 and j==0) return(s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+    if(i==s.taille-1 and j==s.taille-1)return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
 
-//     for (int i=0;i<s.taille;++i)
-//     {
-//         for (int i j=0;j<s.taille;++j)
-//         {
-//             val_case=g.matrice[i][j];
-//             car_case=s.matrice[i][j];
+    /*   
+    if (i>0 and i<s.taille) //Test bord de ligne
+    {
+        cout<<"test";
+        if (j>0 and j <s.taille) //Test bord de colonne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i+1][j]==l or s.matrice[i][j-1]==l or s.matrice[i][j+1]==l);
+        }
+    }
+    if (j-1==-1) //Première colonne
+    {
+        if(i-1==-1) //Première ligne
+        {
+            return (s.matrice[i][j+1]==l or s.matrice[i+1][j]==l);
+        }
+        if(i+1>=s.taille)//Dernière ligne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+        }
+        return (s.matrice[i-1][j]==l or s.matrice[i+1][j] or s.matrice[i][j+1]==l);
+    }
+    if (j+1>s.taille) //Dernière colonne
+    {
+        cout<<"test";   
+        if(i-1==-1) //Première ligne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+        }
+        if(i+1>=s.taille) //Dernière ligne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
+        }
+        return(s.matrice[i-1][j]==l or s.matrice[i+1][j]==l or s.matrice[i][j-1]==l);
+    }
+    if (i-1==-1) //Première ligne
+    {
+        if (j-1==-1) //Première colonne
+        {
+            return (s.matrice[i][j+1]==l or s.matrice[i+1][j]==l);
+        }
+        if (j+1>=s.taille) //Dernière colonne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+        }
+    }
+    if (i+1>=s.taille) //Dernière ligne
+    {
+        if (j-1==-1) // Première colonne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+        }
+        if (j+1>=s.taille) // Dernière colonne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
+        }
+    }
+    */
+    return 0;
+}
 
-//             if (car_case='J') //Jaune
-//             {
-                
-//             }
-//         }
-//     }
-// }
+bool pion_diagonal(solution s,char l,int i,int j)
+{
+    return false;
+}
+
+int compteur_pion(solution s,char l)
+{
+    return false;
+}
+
+int pionsBleus (solution s, instance g)
+{
+    int d = 0; //Différence entre le nombre le nombre de case strictement négatif et le nombre de case strictement positif
+    int t = s.taille; //Taille de la solution
+    
+    //Optimiser pour les petites grilles
+    for (int i = 0; i < t; ++i)
+        for (int j = 0; j < t; ++j)
+        {
+            int val = g.matrice[i][j];
+            if (s.matrice[i][j] == 'B')
+            {
+                if (val > 0) --d; //Comptage d'une valeur strictement positive
+                if (val < 0) ++d; //Comptage d'une valeur strictement négative
+            }
+        }
+
+    //Optimiser pour les grandes grilles
+    // int c = 0; //Nombre de case à parcourir
+    // do
+    // {
+    //     while (d-c > 0)
+    //     {
+
+    //     }
+    //     c -= 1;
+    // }
+    // while (c < t);
+
+    cout << endl << "Debug pions bleus : " << "difference = " << d << ' ' << "valeur des pénalités = " << g.penalite << ' '; d > 0 ? cout << "pénalité pion bleu = " << -d * g.penalite  << endl : cout << "pénalité pion bleu = " << 0  << endl;
+    if (d > 0) return d;
+    return 0;
+}
+
+int pionRouge (solution s, instance g)
+{
+    int i = 0, j = 0, t = s.taille;
+    bool pionRouge = false;
+
+    while (!pionRouge and i < t)
+    {
+        do
+        {
+            if (s.matrice[i][j++] == 'R') pionRouge = true;
+        }
+        while (!pionRouge and j < t);
+
+        if (!pionRouge)
+        {
+            j = 0;
+            ++i;
+        }
+    }
+
+
+    int valPion = g.matrice[i][j-1];
+
+    cout << "debug pionRouge : " << "position pion rouge = [" << i << "][" << j << "] " << "(indexation éronée) " << "valeur= " << valPion << ' ' << "pénalité pion rouge = " << -valPion << endl;
+    return -valPion;
+}
+
+void calculeScore (solution & s, instance g)
+{
+    int score = 0;
+    int nbPenalite = 0;
+
+    nbPenalite += pionsBleus(s, g); //Pion bleus = pénalité seulement, score = 0
+    score += pionRouge(s, g); //Pion rouge = score seulement, aucune pénalité
+
+    // cout << "debug calculeScore : " << "nombre de pénalités = " << nbPenalite << ' ' << "valeur des pénalités = " << g.penalite << endl;
+    s.score = score - nbPenalite * g.penalite;
+}
 
 int main ()
 {
-    string repertoire = "Problemes/probleme_4_a.txt";
-    instance a;
+    string repertoire = "Instances/probleme_4_a.txt";
+    instance a ;
     solution b;
 
     initialisationInstance(repertoire, a);
     affichageInstance(a);
-    genereSolution(b, a);
+    genereSolutionAlea(b, a);
+    calculeScore(b, a);
     affichageSolution(b);
     valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
+    
     
     suppressionInstance(a);
     suppressionSolution(b);
