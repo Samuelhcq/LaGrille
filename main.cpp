@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <tuple>
+#include <cmath>
 
 using namespace std;
 
@@ -228,34 +229,63 @@ int compteur_pion(solution s,char l)
 
 int pionsBleus (solution s, instance g)
 {
+    //Pour debug suivre les indication en commentaire
+    // int nbNegatif = 0, nbPositif = 0; 
+
     int d = 0; //Différence entre le nombre le nombre de case strictement négatif et le nombre de case strictement positif
     int t = s.taille; //Taille de la solution
     
-    //Optimiser pour les petites grilles
+    //Optimiser si petit différence (d)
     for (int i = 0; i < t; ++i)
         for (int j = 0; j < t; ++j)
         {
             int val = g.matrice[i][j];
             if (s.matrice[i][j] == 'B')
             {
+                //Decommenter pour debug
+                // if (val > 0) nbPositif++;
+                // if (val < 0) nbNegatif++;
+                //Commenter pour debug
                 if (val > 0) --d; //Comptage d'une valeur strictement positive
                 if (val < 0) ++d; //Comptage d'une valeur strictement négative
             }
         }
 
-    //Optimiser pour les grandes grilles
-    // int c = 0; //Nombre de case à parcourir
-    // do
-    // {
-    //     while (d-c > 0)
-    //     {
+    //Decommenter pour debug
+    // int d2 = nbNegatif - nbPositif;
+    // nbNegatif = 0, nbPositif = 0;
+    
+    //Optimiser si grande différence (d)
+    /*
+    int i = 0, j = 0, c = t*t+1, val; //Nombre de case à parcourir
+    while (!(abs(d) > c) and i < t)
+    {
+        do
+        {
+            val = g.matrice[i][j];
+            if (s.matrice[i][j++] == 'B')
+            {
+                //Decommenter pour debug
+                // if (val > 0) nbPositif++;
+                // if (val < 0) nbNegatif++;
+                // d = nbNegatif - nbPositif;
+                //Commenter pour debug
+                if (val > 0) --d; //Comptage d'une valeur strictement positive
+                if (val < 0) ++d; //Comptage d'une valeur strictement négative
+            }
+            c--;
+        }
+        while (!(abs(d) > c) and j < t);
 
-    //     }
-    //     c -= 1;
-    // }
-    // while (c < t);
+        if (!(abs(d) > c))
+        {
+            j = 0;
+            ++i;
+        }
+    }*/
 
-    cout << endl << "Debug pions bleus : " << "difference = " << d << ' ' << "valeur des pénalités = " << g.penalite << ' '; d > 0 ? cout << "pénalité pion bleu = " << -d * g.penalite  << endl : cout << "pénalité pion bleu = " << 0  << endl;
+    //Decommenter pour debug
+    // cout << endl << "Debug pions bleus : " << "nombre de valeurs negatifs = " << nbNegatif << ' ' << "nombre de valeurs positives = " << nbPositif << ' ' << "position du dernier pion observé = "<< i << ' ' << j << " (Indexation pour l'agorithme n°2)" << ' '<< "difference algo n°1 = " << d2 << ' ' << "difference algo n°2 = " << d << ' ' << "valeur des pénalités = " << g.penalite << ' '; d > 0 ? cout << "pénalité pion bleu = " << -d * g.penalite  << endl : cout << "pénalité pion bleu = " << 0  << endl;
     if (d > 0) return d;
     return 0;
 }
@@ -280,10 +310,9 @@ int pionRouge (solution s, instance g)
         }
     }
 
-
     int valPion = g.matrice[i][j-1];
 
-    cout << "debug pionRouge : " << "position pion rouge = [" << i << "][" << j << "] " << "(indexation éronée) " << "valeur= " << valPion << ' ' << "pénalité pion rouge = " << -valPion << endl;
+    // cout << "debug pionRouge : " << "position pion rouge = [" << i << "][" << j << "] " << "(indexation éronée) " << "valeur= " << valPion << ' ' << "pénalité pion rouge = " << -valPion << endl;
     return -valPion;
 }
 
