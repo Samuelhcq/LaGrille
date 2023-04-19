@@ -3,7 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
-
+#include <tuple>
 using namespace std;
 
 struct instance
@@ -131,37 +131,137 @@ void suppressionSolution (solution & s)
     delete[] s.matrice;
 }
 
-//void saisieSolution(solution & s, instance g)
-//{
-//    t = g.taille;
-//    s.taille = t;
-//    
-//    s.matrice = new char * [t];
-//    for (int i = 0; i < t; ++i) s.matrice[i] = new char [t];
-//
-//    for (int i = 0; i < t; ++i)
-//    {
-//        for (int j = 0; j < t; ++j)
-//        {
-//            cin >> s.matrice[i][j];
-//        }
-//    }
-//}
+void saisieSolution(solution & s, instance g)
+{
+   int t = g.taille;
+   s.taille = t;
+   
+   s.matrice = new char * [t];
+   for (int i = 0; i < t; ++i) s.matrice[i] = new char [t];
 
+   for (int i = 0; i < t; ++i)
+   {
+       for (int j = 0; j < t; ++j)
+       {
+           cin >> s.matrice[i][j];
+       }
+   }
+}
+
+bool pion_orthogonal(solution s,char l,int i,int j)
+{
+    if (i==0 and j==0) return (s.matrice[i+1][j]==l or s.matrice[i][j+1]==l);
+    if(i==0 and j==s.taille-1) return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+    if(i==s.taille-1 and j==0) return(s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+    if(i==s.taille-1 and j==s.taille-1)return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
+
+    /*   
+    if (i>0 and i<s.taille) //Test bord de ligne
+    {
+        cout<<"test";
+        if (j>0 and j <s.taille) //Test bord de colonne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i+1][j]==l or s.matrice[i][j-1]==l or s.matrice[i][j+1]==l);
+        }
+    }
+
+    if (j-1==-1) //Première colonne
+    {
+        if(i-1==-1) //Première ligne
+        {
+            return (s.matrice[i][j+1]==l or s.matrice[i+1][j]==l);
+        }
+        if(i+1>=s.taille)//Dernière ligne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+        }
+        return (s.matrice[i-1][j]==l or s.matrice[i+1][j] or s.matrice[i][j+1]==l);
+    }
+
+    if (j+1>s.taille) //Dernière colonne
+    {
+        cout<<"test";   
+        if(i-1==-1) //Première ligne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+        }
+        if(i+1>=s.taille) //Dernière ligne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
+        }
+        return(s.matrice[i-1][j]==l or s.matrice[i+1][j]==l or s.matrice[i][j-1]==l);
+    }
+
+    if (i-1==-1) //Première ligne
+    {
+        if (j-1==-1) //Première colonne
+        {
+            return (s.matrice[i][j+1]==l or s.matrice[i+1][j]==l);
+        }
+        if (j+1>=s.taille) //Dernière colonne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i+1][j]==l);
+        }
+    }
+
+    if (i+1>=s.taille) //Dernière ligne
+    {
+        if (j-1==-1) // Première colonne
+        {
+            return (s.matrice[i-1][j]==l or s.matrice[i][j+1]==l);
+        }
+        if (j+1>=s.taille) // Dernière colonne
+        {
+            return (s.matrice[i][j-1]==l or s.matrice[i-1][j]==l);
+        }
+    }
+    */
+    return 0;
+}
+
+bool pion_diagonal(solution s,char l,int i,int j)
+{
+    return false;
+}
+
+int compteur_pion(solution s,char l)
+{
+    return false;
+}
 // int calculeScore (instance g, solution s)
 // {
-//     int scoreTotal=0;
-
+//     int scoreTotal=0,penalite=0;  
 //     for (int i=0;i<s.taille;++i)
 //     {
-//         for (int i j=0;j<s.taille;++j)
+//         for (int j=0;j<s.taille;++j)
 //         {
-//             val_case=g.matrice[i][j];
-//             car_case=s.matrice[i][j];
+//             int val_case=g.matrice[i][j];
+//             char car_case=s.matrice[i][j];
+//             {             
+//                 if (car_case='J') //Jaune
+//                 {
 
-//             if (car_case='J') //Jaune
-//             {
-                
+//                 }
+//                 if(car_case='V') //Vert
+//                 {
+
+//                 }
+//                 if(car_case='N') //Noir
+//                 {
+                    
+//                 }
+//                 if(car_case='B') //Bleu
+//                 {
+                    
+//                 }
+//                 if(car_case='O') //Orange
+//                 {N
+                    
+//                 }
+//                 if(car_case='R') //Rouge
+//                 {
+                    
+//                 }
 //             }
 //         }
 //     }
@@ -169,16 +269,20 @@ void suppressionSolution (solution & s)
 
 int main ()
 {
-    string repertoire = "Problemes/probleme_4_a.txt";
+    string repertoire = "Instances/test.txt";
     instance a;
     solution b;
 
     initialisationInstance(repertoire, a);
-    affichageInstance(a);
-    genereSolution(b, a);
+    saisieSolution(b,a);
     affichageSolution(b);
-    valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
-    
+    for (int i=0;i<b.taille;++i)
+    {
+        for (int j=0;j<b.taille;++j)
+        {
+            cout<<"Solution orthogonal i ="<<i<<" j= "<<j<<" "<<pion_orthogonal(b,'J',i,j)<<endl;
+        }
+    }
     suppressionInstance(a);
     suppressionSolution(b);
 }
