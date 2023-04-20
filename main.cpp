@@ -192,44 +192,106 @@ int compteur_pion(solution s,char l)
     }
     return compteur;
 }
-// int calculeScore (instance g, solution s)
-// {
-//     int scoreTotal=0,penalite=0;  
-//     for (int i=0;i<s.taille;++i)
-//     {
-//         for (int j=0;j<s.taille;++j)
-//         {
-//             int val_case=g.matrice[i][j];
-//             char car_case=s.matrice[i][j];
-//             {             
-//                 if (car_case='J') //Jaune
-//                 {
+int pionsBleus (solution s, instance g)
+{
+    //Pour debug suivre les indication en commentaire
+    // int nbNegatif = 0, nbPositif = 0; 
 
-//                 }
-//                 if(car_case='V') //Vert
-//                 {
+    int d = 0; //Différence entre le nombre le nombre de case strictement négatif et le nombre de case strictement positif
+    int t = s.taille; //Taille de la solution
+    
+    //Optimiser si petit différence (d)
+    for (int i = 0; i < t; ++i)
+        for (int j = 0; j < t; ++j)
+        {
+            int val = g.matrice[i][j];
+            if (s.matrice[i][j] == 'B')
+            {
+                //Decommenter pour debug
+                // if (val > 0) nbPositif++;
+                // if (val < 0) nbNegatif++;
+                //Commenter pour debug
+                if (val > 0) --d; //Comptage d'une valeur strictement positive
+                if (val < 0) ++d; //Comptage d'une valeur strictement négative
+            }
+        }
 
-//                 }
-//                 if(car_case='N') //Noir
-//                 {
-                    
-//                 }
-//                 if(car_case='B') //Bleu
-//                 {
-                    
-//                 }
-//                 if(car_case='O') //Orange
-//                 {N
-                    
-//                 }
-//                 if(car_case='R') //Rouge
-//                 {
-                    
-//                 }
-//             }
-//         }
-//     }
-// }
+    //Decommenter pour debug
+    // int d2 = nbNegatif - nbPositif;
+    // nbNegatif = 0, nbPositif = 0;
+    
+    //Optimiser si grande différence (d)
+    /*
+    int i = 0, j = 0, c = t*t+1, val; //Nombre de case à parcourir
+    while (!(abs(d) > c) and i < t)
+    {
+        do
+        {
+            val = g.matrice[i][j];
+            if (s.matrice[i][j++] == 'B')
+            {
+                //Decommenter pour debug
+                // if (val > 0) nbPositif++;
+                // if (val < 0) nbNegatif++;
+                // d = nbNegatif - nbPositif;
+                //Commenter pour debug
+                if (val > 0) --d; //Comptage d'une valeur strictement positive
+                if (val < 0) ++d; //Comptage d'une valeur strictement négative
+            }
+            c--;
+        }
+        while (!(abs(d) > c) and j < t);
+        if (!(abs(d) > c))
+        {
+            j = 0;
+            ++i;
+        }
+    }*/
+
+    //Decommenter pour debug
+    // cout << endl << "Debug pions bleus : " << "nombre de valeurs negatifs = " << nbNegatif << ' ' << "nombre de valeurs positives = " << nbPositif << ' ' << "position du dernier pion observé = "<< i << ' ' << j << " (Indexation pour l'agorithme n°2)" << ' '<< "difference algo n°1 = " << d2 << ' ' << "difference algo n°2 = " << d << ' ' << "valeur des pénalités = " << g.penalite << ' '; d > 0 ? cout << "pénalité pion bleu = " << -d * g.penalite  << endl : cout << "pénalité pion bleu = " << 0  << endl;
+    if (d > 0) return d;
+    return 0;
+}
+
+int pionRouge (solution s, instance g)
+{
+    int i = 0, j = 0, t = s.taille;
+    bool pionRouge = false;
+
+    while (!pionRouge and i < t)
+    {
+        do
+        {
+            if (s.matrice[i][j++] == 'R') pionRouge = true;
+        }
+        while (!pionRouge and j < t);
+
+        if (!pionRouge)
+        {
+            j = 0;
+            ++i;
+        }
+    }
+
+    int valPion = g.matrice[i][j-1];
+
+    // cout << "debug pionRouge : " << "position pion rouge = [" << i << "][" << j << "] " << "(indexation éronée) " << "valeur= " << valPion << ' ' << "pénalité pion rouge = " << -valPion << endl;
+    return -valPion;
+}
+
+void calculeScore (solution & s, instance g)
+{
+    int score = 0;
+    int nbPenalite = 0;
+
+    nbPenalite += pionsBleus(s, g); //Pion bleus = pénalité seulement, score = 0
+    score += pionRouge(s, g); //Pion rouge = score seulement, aucune pénalité
+
+    // cout << "debug calculeScore : " << "nombre de pénalités = " << nbPenalite << ' ' << "valeur des pénalités = " << g.penalite << endl;
+    s.score = score - nbPenalite * g.penalite;
+}
+
 
 int main ()
 {
