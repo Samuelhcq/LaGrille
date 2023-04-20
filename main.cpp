@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <tuple>
-#include <cmath>
 
 using namespace std;
 
@@ -45,7 +44,7 @@ void initialisationInstance (string ficA, instance & g) // Initialise l'instance
 
 void suppressionInstance (instance & g)
 {
-    for (int i = 0; i < g.taille; ++i)
+    for (int i = 0; i < g.taille; ++i) //A MODIFIER !!!!!!!!!!!!!!!!
         delete[] g.matrice[i];
     delete[] g.matrice;
 }
@@ -150,7 +149,8 @@ void suppressionSolution (solution & s)
 //    }
 //}
 
-bool pion_orthogonal(solution s, char l, int i, int j) {
+bool pionOrthogonal (solution s, char l, int i, int j)
+{
     // au dessus
     if (i > 0 && s.matrice[i-1][j] == l) return true;
     //en dessous
@@ -163,7 +163,8 @@ bool pion_orthogonal(solution s, char l, int i, int j) {
     return false;
 }
 
-bool pion_diagonal(solution s, char l, int i, int j) {
+bool pionDiagonal (solution s, char l, int i, int j)
+{
     //haut à gauche
     if (i > 0 && j > 0 && s.matrice[i-1][j-1] == l) return true;
 
@@ -179,18 +180,27 @@ bool pion_diagonal(solution s, char l, int i, int j) {
     return false;
 }
 
-int compteur_pion(solution s,char l)
+int compteurPions (solution s, char l)
 {
-    int compteur=0;
-    for (int i=0;i<s.taille;++i)
+    int compteur = 0;
+
+    for (int i = 0; i < s.taille; ++i)
     {
-        for (int j=0;j<s.taille;++i)
+        for (int j = 0; j < s.taille; ++j)
         {
-            if (s.matrice[i][j]==l)++compteur;
+            if (s.matrice[i][j%s.taille] == l) ++compteur;
         }
     }
+
     return compteur;
 }
+
+//Decommenter si pionBleus utilise abs
+/*int abs (int x)
+{
+    if(x >= 0) return x;
+    return -x;
+}*/
 
 int pionsBleus (solution s, instance g)
 {
