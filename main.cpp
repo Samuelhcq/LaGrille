@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <tuple>
 using namespace std;
 
@@ -65,6 +66,7 @@ void affichageInstance (instance g)
 bool valide (solution s)
 {
     int t = s.taille;
+    int t = s.taille;
     int r = 0;
     int i = 0, j = 0;
 
@@ -74,9 +76,9 @@ bool valide (solution s)
         {
             if (s.matrice[i][j++] == 'R') r++;
         }
-        while (r < 2 and j < 4);
+        while (r < 2 and j < t);
 
-        if (r < 2)
+        if (r < 2) //On peut s'en passer si la grilles est grande
         {
             j = 0;
             ++i;
@@ -86,7 +88,7 @@ bool valide (solution s)
     return r == 1;
 }
 
-void genereSolution (solution & s, instance g)
+void genereSolutionAlea (solution & s, instance g)
 {
     int t = g.taille;
     s.taille = t;
@@ -120,8 +122,7 @@ void affichageSolution (solution s)
         for (int j = 0; j < t; ++j)
             cout << s.matrice[i][j] << ' ';
     }
-    cout << endl;
-    // cout << endl << s.score << endl;
+    cout << endl << s.score << endl;
 }
 
 void suppressionSolution (solution & s)
@@ -131,51 +132,46 @@ void suppressionSolution (solution & s)
     delete[] s.matrice;
 }
 
-void saisieSolution(solution & s, instance g)
-{
-   int t = g.taille;
-   s.taille = t;
-   
-   s.matrice = new char * [t];
-   for (int i = 0; i < t; ++i) s.matrice[i] = new char [t];
+//void saisieSolution(solution & s, instance g)
+//{
+//    int t = g.taille;
+//    s.taille = t;
+//    
+//    s.matrice = new char * [t];
+//    for (int i = 0; i < t; ++i) s.matrice[i] = new char [t];
+//
+//    for (int i = 0; i < t; ++i)
+//    {
+//        for (int j = 0; j < t; ++j)
+//        {
+//            cin >> s.matrice[i][j];
+//        }
+//    }
+//}
 
-   for (int i = 0; i < t; ++i)
-   {
-       for (int j = 0; j < t; ++j)
-       {
-           cin >> s.matrice[i][j];
-       }
-   }
-}
-
-bool pion_orthogonal(solution s, char l, int i, int j) 
-{
-    //au dessus
-    if (i > 0 and s.matrice[i-1][j] == l) return true;
-
+bool pion_orthogonal(solution s, char l, int i, int j) {
+    // au dessus
+    if (i > 0 && s.matrice[i-1][j] == l)return true;
     //en dessous
-    if (i < s.taille-1 and s.matrice[i+1][j] == l)return true;
-
-    //à gauche
-    if (j > 0 and s.matrice[i][j-1] == l)return true;
-
+    if (i < s.taille-1 && s.matrice[i+1][j] == l)return true;
+    // à gauche
+    if (j > 0 && s.matrice[i][j-1] == l)return true;
     //à droite
-    if (j < s.taille-1 and s.matrice[i][j+1] == l)return true;
-
+    if (j < s.taille-1 && s.matrice[i][j+1] == l)return true;
     return false;
 }
 
-bool pion_diagonal(solution s,char l,int i,int j)
-{
+bool pion_diagonal(solution s, char l, int i, int j) {
     //haut à gauche
     if (i > 0 && j > 0 && s.matrice[i-1][j-1] == l)return true;
+
     //haut à droite
     if (i > 0 && j < s.taille-1 && s.matrice[i-1][j+1] == l)return true;
 
-    //bas à gauche
+    // bas à gauche
     if (i < s.taille-1 && j > 0 && s.matrice[i+1][j-1] == l)return true;
 
-    //bas à droite de la position
+    //bas à droite
     if (i < s.taille-1 && j < s.taille-1 && s.matrice[i+1][j+1] == l)return true;
     return false;
 }
@@ -185,13 +181,14 @@ int compteur_pion(solution s,char l)
     int compteur=0;
     for (int i=0;i<s.taille;++i)
     {
-        for (int j=0;j<s.taille;++j)
+        for (int j=0;j<s.taille;++i)
         {
             if (s.matrice[i][j]==l)++compteur;
         }
     }
     return compteur;
 }
+
 int pionsBleus (solution s, instance g)
 {
     //Pour debug suivre les indication en commentaire
