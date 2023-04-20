@@ -66,7 +66,6 @@ void affichageInstance (instance g)
 bool valide (solution s)
 {
     int t = s.taille;
-    int t = s.taille;
     int r = 0;
     int i = 0, j = 0;
 
@@ -297,7 +296,6 @@ int main ()
     solution b;
 
     initialisationInstance(repertoire, a);
-    saisieSolution(b,a);
     affichageSolution(b);
     for (int i=0;i<b.taille;++i)
     {
