@@ -19,7 +19,7 @@ struct solution {
     char ** matrice;
 };
 
-void initialisationInstance (string ficA, instance & g) // Initialise l'instance g avec ficA son adresse
+void initialisationInstance (string ficA, instance & g)
 {
     ifstream fichier(ficA);
     if(fichier)
@@ -42,11 +42,15 @@ void initialisationInstance (string ficA, instance & g) // Initialise l'instance
     else cerr << "Erreur : le fichier ne peut pas être lu !";
 }
 
-void suppressionInstance (instance & g)
+void suppressionInstance(instance &g)
 {
-    for (int i = 0; i < g.taille; ++i) //A MODIFIER !!!!!!!!!!!!!!!!
+    for (int i = 0; i < g.taille; ++i)
         delete[] g.matrice[i];
     delete[] g.matrice;
+
+    g.taille = 0;
+    g.penalite = 0;
+    g.matrice = nullptr;
 }
 
 void affichageInstance (instance g)
@@ -122,14 +126,18 @@ void affichageSolution (solution s)
             cout << s.matrice[i][j] << ' ';
     }
     cout << endl;
-    cout << endl << s.score << endl;
+    //cout << endl << s.score << endl;
 }
 
 void suppressionSolution (solution & s)
 {
-    for (int i = 0; i < s.taille; ++i)
+    for (int i = 0; i <s.taille; ++i)
         delete[] s.matrice[i];
     delete[] s.matrice;
+
+    s.taille=0;
+    s.score=0;
+    s.matrice=nullptr;
 }
 
 //void saisieSolution(solution & s, instance g)
@@ -339,24 +347,22 @@ void calculeScore (solution & s, instance g)
 int main ()
 {
     string repertoire = "Instances/probleme_4_a.txt";
-    instance a ;
+    instance a;
     solution b;
 
     initialisationInstance(repertoire, a);
-    affichageInstance(a);
     genereSolutionAlea(b, a);
-    calculeScore(b, a);
+    cout<<"instance :";
+    affichageInstance(a);
+    cout<<endl<<"solution :";
     affichageSolution(b);
-    valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
-    
-    // for (int i=0;i<b.taille;++i)
-    // {
-    //     for (int j=0;j<b.taille;++j)
-    //     {
-    //         cout<<"Solution orthogonal i ="<<i<<" j= "<<j<<" "<<pion_orthogonal(b,'J',i,j)<<endl;
-    //     }
-    // }
 
     suppressionInstance(a);
     suppressionSolution(b);
+
+
+    cout<<"instance après suppression";
+    affichageInstance(a);
+    cout<<"solution après suppression";
+    affichageSolution(b);
 }
