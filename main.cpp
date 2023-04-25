@@ -136,7 +136,7 @@ void affichageSolution (solution s)
             cout << s.matrice[i][j] << ' ';
     }
     cout << endl;
-    cout << endl << s.score << endl;
+    //cout << endl << s.score << endl;
 }
 
 void suppressionSolution (solution & s)
@@ -266,7 +266,7 @@ int pionsBleus (solution s, instance g)
         }
     }*/
 
-    cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
+    //cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
     if (d > 0) return d;
     return 0;
 }
@@ -293,7 +293,7 @@ int pionRouge (solution s, instance g)
 
     int valPion = g.matrice[i][j-1];
 
-    cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
+    //cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
     return -valPion;
 }
 
@@ -314,7 +314,7 @@ int pionsNoirs (solution s, instance g)
             
         }
 
-    cout << "Score pions noirs : " << (nbPionsNoirs <= t ? 2*(score-nbPionsNoirs) : score-nbPionsNoirs) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionsNoirs << "\t, doublé=" <<(nbPionsNoirs <= t ? true : false) << endl;
+    //cout << "Score pions noirs : " << (nbPionsNoirs <= t ? 2*(score-nbPionsNoirs) : score-nbPionsNoirs) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionsNoirs << "\t, doublé=" <<(nbPionsNoirs <= t ? true : false) << endl;
     if (nbPionsNoirs <= t) return 2*(score-nbPionsNoirs);
     return score-nbPionsNoirs;
 
@@ -441,16 +441,53 @@ tuple<int, int> pionsJaunes (solution s, instance g)
     // return score - nbPionsIsoles * g.penalite;
 
     //Revoie d'un tuple avec le score et le nombre de pénalité
-    cout << "Projection du score pions jaunes : " << score - nbPionsIsoles * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsoles << endl;
+    //cout << "Projection du score pions jaunes : " << score - nbPionsIsoles * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsoles << endl;
     return make_tuple(score, nbPionsIsoles);
 }
 
+tuple<int, int> pionsVerts (solution s, instance g)
+{
+    int score=0,penalite =0;
+
+    int taille=g.taille;
+
+    for (int i=0;i<taille;++i)
+    {
+        for (int j=0;j<taille;++j)
+        {
+            if (s.matrice[i][j]=='V')
+            {
+                score+=g.matrice[i][j]; //Ajout au score de la valeur de la case
+                //Ajout au score des valeurs des cases adjacentes (orthogonales)
+                if (j > 0) score+=g.matrice[i][j-1];
+                if (j < s.taille-1) score+=g.matrice[i][j+1];
+                if (i > 0) score+=g.matrice[i-1][j];
+                if (i < s.taille-1) score+=g.matrice[i+1][j];
+
+                //Incrémentation de la pénalité pour les cases orthogonales
+                if (j > 0 && s.matrice[i][j-1] == 'V') penalite+=1;
+                if (j < s.taille-1 && s.matrice[i][j+1] == 'V') penalite+=1;
+                if (i > 0 && s.matrice[i-1][j] == 'V') penalite+=1;
+                if (i < s.taille-1 && s.matrice[i+1][j] == 'V') penalite+=1;
+
+                //Incrémentation de la pénalité pour les cases diagonales
+                if (i > 0 && j > 0 && s.matrice[i-1][j-1] == 'V')penalite+=1;
+                if (i > 0 && j < s.taille-1 && s.matrice[i-1][j+1] == 'V')penalite+=1;
+                if (i < s.taille-1 && j > 0 && s.matrice[i+1][j-1] == 'V')penalite+=1;
+                if (i < s.taille-1 && j < s.taille-1 && s.matrice[i+1][j+1] == 'V')penalite+=1;
+            }
+        }
+    }
+    penalite = (int)penalite/2;
+    //cout<<"Debug score vert, score :"<<score<<" pénalité : "<<penalite<<endl;
+    return make_tuple(score,penalite);
+}
 void calculeScore (solution & s, instance g)
 {
     int score = 0;
     int nbPenalite = 0;
     //A supprimer si on utilise pas les tuples
-    int tempScore = 0, tempNbPenalite = 0;
+    int tempScore = 0,tempNbPenalite = 0;
 
     nbPenalite += pionsBleus (s, g); //Pion bleus = pénalité seulement, score = 0
     score += pionRouge (s, g); //Pion rouge = score seulement, aucune pénalité
@@ -459,15 +496,19 @@ void calculeScore (solution & s, instance g)
     //A modifier si on utilise pas les tuples
     tie(tempScore, tempNbPenalite) = pionsJaunes(s, g);
     score += tempScore; nbPenalite += tempNbPenalite;
+    tempScore=0;tempNbPenalite=0;
+    tie(tempScore, tempNbPenalite) = pionsVerts(s, g);
+    score += tempScore; nbPenalite += tempNbPenalite;
 
-    // cout << "debug calculeScore : " << "nombre de pénalités = " << nbPenalite << ' ' << "valeur des pénalités = " << g.penalite << endl;
+
+    cout << "debug calculeScore : " << "nombre de pénalités = " << nbPenalite << ' ' << "valeur des pénalités = " << g.penalite << endl;
     s.score = score - (nbPenalite * g.penalite);
 }
 
 int main ()
 {
-    system ("CLS");
-    string repertoire = "Instances/probleme_4_a.txt";
+    //system ("CLS");
+    string repertoire = "Instances/test.txt";
     instance a ;
     solution b;
 
@@ -476,7 +517,7 @@ int main ()
     genereSolutionAlea(b, a);
     calculeScore(b, a);
     affichageSolution(b);
-    valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
+    //valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
     
     // for (int i=0;i<b.taille;++i)
     // {
@@ -485,7 +526,8 @@ int main ()
     //         cout<<"Solution orthogonal i ="<<i<<" j= "<<j<<" "<<pion_orthogonal(b,'J',i,j)<<endl;
     //     }
     // }
-
-    suppressionInstance(a);
-    suppressionSolution(b);
+    cout<<"FIN DE L'EXECUTION";
+    //suppressionInstance(a);
+    //suppressionSolution(b);
+    
 }
