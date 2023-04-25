@@ -136,7 +136,7 @@ void affichageSolution (solution s)
             cout << s.matrice[i][j] << ' ';
     }
     cout << endl;
-    //cout << endl << s.score << endl;
+    cout << endl << s.score << endl;
 }
 
 void suppressionSolution (solution & s)
@@ -468,22 +468,24 @@ int main ()
 {
     system ("CLS");
     string repertoire = "Instances/probleme_4_a.txt";
-    instance a;
+    instance a ;
     solution b;
 
     initialisationInstance(repertoire, a);
-    genereSolutionAlea(b, a);
-    cout<<"instance :";
     affichageInstance(a);
-    cout<<endl<<"solution :";
+    genereSolutionAlea(b, a);
+    calculeScore(b, a);
     affichageSolution(b);
+    valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
+    
+    // for (int i=0;i<b.taille;++i)
+    // {
+    //     for (int j=0;j<b.taille;++j)
+    //     {
+    //         cout<<"Solution orthogonal i ="<<i<<" j= "<<j<<" "<<pion_orthogonal(b,'J',i,j)<<endl;
+    //     }
+    // }
 
     suppressionInstance(a);
     suppressionSolution(b);
-
-
-    cout<<"instance après suppression";
-    affichageInstance(a);
-    cout<<"solution après suppression";
-    affichageSolution(b);
 }
