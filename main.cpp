@@ -125,6 +125,29 @@ void genereSolutionAlea (solution & s, instance g)
     } while (!valide(s));
 }
 
+void initialisationSolution (string ficA, solution & s, instance g)
+{
+    s.taille = g.taille;
+    int t = s.taille;
+    
+    ifstream fichier(ficA);
+
+    if(fichier)
+    {
+        s.matrice = new char * [t];
+
+        for (int i = 0; i < t; ++i)
+        {
+            s.matrice[i] = new char [t];
+            for (int j = 0; j < t; ++j)
+            {
+                fichier >> s.matrice[i][j];
+            }
+        }
+    }
+    else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !";
+}
+
 void affichageSolution (solution s)
 {
     int t = s.taille;
@@ -508,13 +531,15 @@ void calculeScore (solution & s, instance g)
 int main ()
 {
     //system ("CLS");
-    string repertoire = "Instances/test.txt";
+    string repInstance = "Instances/probleme_4_a.txt";
+    string repSolution = "Solutions/solution_1.txt";
     instance a ;
     solution b;
 
-    initialisationInstance(repertoire, a);
+    initialisationInstance(repInstance, a);
     affichageInstance(a);
-    genereSolutionAlea(b, a);
+    // genereSolutionAlea(b, a);
+    initialisationSolution(repSolution, b, a);
     calculeScore(b, a);
     affichageSolution(b);
     //valide(b) == 1 ? cout << endl << "Solution valide." << endl : cout << endl << "Solution invalide." << endl;
