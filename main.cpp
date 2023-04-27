@@ -44,7 +44,7 @@ void initialisationInstance (string ficA, instance & g)
             }
         }
     }
-    else cerr << "Erreur : le fichier ne peut pas être lu !";
+    else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !";
 }
 
 void suppressionInstance(instance & g)
