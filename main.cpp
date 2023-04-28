@@ -1,13 +1,15 @@
 #include <iostream>
-#include <string>
-//Lecture de fichier
 #include <fstream>
-//Génération de grille aléatoire
+#include <string>
+//??
+#include <cstdlib>
+//Pour la génération de grille aléatoire
 #include <ctime>
-//Netoyer le terminal
+//Pour clear le terminal
 #include <stdlib.h>
-//Renvoie de tuple
+//Pour renvoyer des tuples
 #include <tuple>
+#include <vector>
 
 //Déclaration des identificateurs
 using namespace std;
@@ -16,13 +18,13 @@ using namespace std;
 struct instance
 {
     int taille, penalite;
-    int ** matrice;
+    vector <vector <int>> matrice;
 };
 
 struct solution
 {
     int taille, score;
-    char ** matrice;
+    vector <vector <char>> matrice;
 };
 
 //Initialisation du fichier d'entrée
@@ -39,39 +41,27 @@ void initialisationInstance (string ficA, instance & g)
         fichier >> t; g.taille = t;
         fichier >> g.penalite;
 
-        //Création première dimension de la matrice grille (allocation)
-        g.matrice = new int * [t];
+        //Création de la variable temporaire accueillant le nombre lu
+        int nombre;
 
         //Assignation de la grille
         for (int i = 0; i < t; ++i)
         {
-            //Création deuxième dimension de la matrice grille (allocation)
-            g.matrice[i] = new int [t];
+            //Création deuxième dimension de la matrice grille (vecteur temporaire)
+            vector <int> temp;
             for (int j = 0; j < t; ++j)
             {
                 //Lecture du nombre (avec comme séparateur ' ')
-                fichier >> g.matrice[i][j];
+                fichier >> nombre;
+                //Assignation du nombre lu dans le vecteur
+                temp.push_back(nombre);
             }
+            //Création de la première dimension de la matrice grille (vecteur)
+            g.matrice.push_back(temp);
         }
     }
     //Message d'erreur
     else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
-}
-
-//Suppréssion de la grille (fichier d'entrée)
-void suppressionInstance (instance & g)
-{
-    //Suppréssion de la grille
-    for (int i = 0; i < g.taille; ++i)
-    {
-        //Suppréssion deuxième dimension de la matrice grille (désallocation)
-        delete[] g.matrice[i];
-    }
-    //Suppréssion première dimension de la matrice grille (désallocation)
-    delete[] g.matrice;
-
-    //Fin de la suppréssion du fichier
-    g.matrice = nullptr;
 }
 
 //Afichage de la grille (fichier d'entrée)
@@ -140,30 +130,53 @@ void genereSolutionAlea (solution & s, instance g)
     //Création de la liste contenant les pions
     char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
 
-    //Création première dimension de la matrice solution (allocation)
-    s.matrice = new char * [t];
-    //Création deuxième dimension de la matrice solution (allocation)
-    //Création effectué en dehors de la boucle par soucis d'optimisation
-    for (int i = 0; i < t; ++i)
-    {
-        s.matrice[i] = new char [t]; 
-    }
-
     //Génaration de la solution
     //Temps que la solution n'est pas valide on en génère
     do
     {
+        //Supprésion du vecteur
+        s.matrice.clear();
         for (int i = 0; i < t; ++i)
         {
+            //Création deuxième dimension de la matrice grille (vecteur temporaire)
+            vector <char> temp;
             for (int j = 0; j < t; ++j)
             {
                 //Assignation du pion aléatoirement parmis la liste des pions
-                s.matrice[i][j] = lettres[rand() % 6];
+                temp.push_back(lettres[rand() % 6]);
             }
+            //Création de la première dimension de la matrice grille (vecteur)
+            s.matrice.push_back(temp);
         }
         //Débuggage
         //cout << "Débuggage fonction genereSolutionAlea() : \t" << "valide=" << (valide(s) == 1 ? true : false) << endl;
     } while (!valide(s));
+}
+
+//Saisie d'une solution manuellement
+void saisieSolution (solution & s, instance g)
+{
+    //Assignation de la variable taille
+    int t = g.taille;
+    s.taille = t;
+    
+    //Création de la variable temporaire accueillant le caractère
+    char lettre;
+    //Saisie de la matrice solution
+    for (int i = 0; i < t; ++i)
+    {
+        //Création deuxième dimension de la matrice grille (vecteur temporaire)
+        vector <char> temp;
+        for (int j = 0; j < t; ++j)
+        {
+            //Saisie assigné à la variable temporaire
+            cin >> lettre;
+            //Injection de la saisie dans le vecteur temporaire
+            temp.push_back(lettre);
+        }
+        //Création de la première dimension de la matrice grille (vecteur)
+        s.matrice.push_back(temp);
+    }
 }
 
 //Lecture d'une matrice solution
@@ -179,19 +192,23 @@ void lectureSolution (string ficA, solution & s, instance g)
     //Lecture du fichier
     if (fichier)
     {
-        //Création première dimension de la matrice grille (allocation)
-        s.matrice = new char * [t];
+        //Création de la variable temporaire accueillant le caractère lu
+        char caractere;
 
         //Assignation de la solution
         for (int i = 0; i < t; ++i)
         {
-            //Création deuxième dimension de la matrice grille (allocation)
-            s.matrice[i] = new char [t];
+            //Création deuxième dimension de la matrice grille (vecteur temporaire)
+            vector<char> temp;
             for (int j = 0; j < t; ++j)
             {
                 //Lecture du caractère (avec comme séparateur ' ')
-                fichier >> s.matrice[i][j];
+                fichier >> caractere;
+                //Assignation du nombre lu dans le vecteur
+                temp.push_back(caractere);
             }
+            //Création de la première dimension de la matrice grille (vecteur)
+            s.matrice.push_back(temp);
         }
     }
     //Message d'erreur
@@ -199,32 +216,6 @@ void lectureSolution (string ficA, solution & s, instance g)
 
     //Débuggage
     //cout << "Débuggage fonction lectureSolution() : \t" << "valide=" << (valide(s) == 1 ? true : false) << endl;
-}
-
-//Saisie d'une solution manuellement
-void saisieSolution (solution & s, instance g)
-{
-    //Assignation de la variable taille
-    int t = g.taille;
-    s.taille = t;
-   
-    //Création première dimension de la matrice solution (allocation)
-    s.matrice = new char * [t];
-    //Création deuxième dimension de la matrice solution (allocation)
-    for (int i = 0; i < t; ++i)
-    {
-        s.matrice[i] = new char [t];
-    }
-
-    //Saisie de la matrice solution
-    for (int i = 0; i < t; ++i)
-    {
-        for (int j = 0; j < t; ++j)
-        {
-            //Assginement du pion
-            cin >> s.matrice[i][j];
-        }
-    }
 }
 
 //Afichage de la solution (fichier de sortie)
@@ -246,22 +237,6 @@ void affichageSolution (solution s)
 
     //Affichage du score de la solution
     cout << endl << "Score final : " << s.score << endl;
-}
-
-//Suppréssion de la solution (fichier de sortie)
-void suppressionSolution (solution & s)
-{
-    //Suppréssion de la solution
-    for (int i = 0; i < s.taille; ++i)
-    {
-        //Suppréssion deuxième dimension de la matrice solution (désallocation)
-        delete[] s.matrice[i];
-    }
-    //Suppréssion première dimension de la matrice solution (désallocation)
-    delete[] s.matrice;
-
-    //Fin de la suppréssion du fichier
-    s.matrice = nullptr;
 }
 
 //Vérifie les pions adjacents orthogonalements
@@ -706,9 +681,9 @@ int main ()
 
     //Initialisation de la solution (selectionner le moyen de l'initialisation)
     //Initialisation aléatoire
-    genereSolutionAlea(b, a);
+    // genereSolutionAlea(b, a);
     //Initialisation d'un fichier
-    // lectureSolution(repSolution, b, a);
+    lectureSolution(repSolution, b, a);
     //Initialisation par la saisie
     // saisieSolution(b, a);
 
@@ -719,9 +694,4 @@ int main ()
 
     //Débuggage
     cout << endl << "Fin de l'éxecution." << endl;
-
-    //Suppréssion de la grille
-    // suppressionInstance(a);
-    //Suppréssion de la solution
-    // suppressionSolution(b);
 }
