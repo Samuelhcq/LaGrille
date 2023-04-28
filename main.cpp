@@ -303,7 +303,8 @@ int pionRouge (solution s, instance g)
     {
         do
         {
-            if (s.matrice[i][j++] == 'R') pionRouge = true;
+            j++;
+            if (s.matrice[i][j] == 'R') pionRouge = true;
         }
         while (!pionRouge and j < t);
 
@@ -314,7 +315,7 @@ int pionRouge (solution s, instance g)
         }
     }
 
-    int valPion = g.matrice[i][j-1];
+    int valPion = g.matrice[i][j];
 
     //cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
     return -valPion;
