@@ -239,7 +239,7 @@ void affichageSolution (solution s)
         cout << endl;
         for (int j = 0; j < t; ++j)
         {
-            cout << s.matrice[i][j] << ' ';
+            cout << s.matrice[i][j] << "\t";
         }
     }
     cout << endl;
@@ -263,23 +263,6 @@ void suppressionSolution (solution & s)
     //Fin de la suppréssion du fichier
     s.matrice = nullptr;
 }
-
-//void saisieSolution(solution & s, instance g)
-//{
-//    int t = g.taille;
-//    s.taille = t;
-//    
-//    s.matrice = new char * [t];
-//    for (int i = 0; i < t; ++i) s.matrice[i] = new char [t];
-//
-//    for (int i = 0; i < t; ++i)
-//    {
-//        for (int j = 0; j < t; ++j)
-//        {
-//            cin >> s.matrice[i][j];
-//        }
-//    }
-//}
 
 //Vérifie les pions adjacents orthogonalements
 bool pionOrthogonal (solution s, char l, int i, int j)
@@ -340,7 +323,7 @@ int pionsBleus (solution s, instance g)
     //Création de la variable différence entre le nombre de case strictement négatif et le nombre de case strictement positif ('d'), valeur ('val') et taille ('t')
     int d = 0, val, t = s.taille;
     //Débuggage
-    int nbNegatif = 0, nbPositif = 0;
+    // int nbNegatif = 0, nbPositif = 0;
 
     //Optimiser si petite différence (avec 'd' comme référence)
 
@@ -360,14 +343,14 @@ int pionsBleus (solution s, instance g)
                 {
                     d--;
                     //Débuggage
-                    nbPositif++;
+                    // nbPositif++;
                 }
                 //Nombre sctrictement négatif, incrémentation de la différence
                 if (val < 0) 
                 {   
                     d++;
                     //Débuggage
-                    nbNegatif++;
+                    // nbNegatif++;
                 }
             }
         }
@@ -395,14 +378,14 @@ int pionsBleus (solution s, instance g)
                 {
                     d--;
                     //Débuggage
-                    nbPositif++;
+                    // nbPositif++;
                 }
                 //Nombre sctrictement négatif, incrémentation de la différence
                 if (val < 0) 
                 {   
                     d++;
                     //Débuggage
-                    nbNegatif++;
+                    // nbNegatif++;
                 }
             }
 
@@ -421,7 +404,7 @@ int pionsBleus (solution s, instance g)
     */
 
     //Débuggage algorithme 1
-    cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
+    // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
     //Débuggage algorithme 2
     // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << "\t, arrêt du passage en revue à G[" << i << "][" << j << "]" << endl;
     
@@ -466,7 +449,7 @@ int pionRouge (solution s, instance g)
     int valPion = g.matrice[i][j];
 
     //Débuggage
-    cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
+    // cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
     
     //On retourne l'opposé de la valeur du pion rouge
     return -valPion;
@@ -499,7 +482,7 @@ int pionsNoirs (solution s, instance g)
         
 
     //Débuggage algorithme 1
-    cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
+    // cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
     
     //Retour de fonction algorithme 1
     //Si nombre de pion noir suppérieur à la taille ('t'), on retourne le score doublé (clacule du -1)
@@ -543,7 +526,7 @@ int pionsNoirs (solution s, instance g)
     }
 
     //Débuggage algorithme 2
-    cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*score : score) << "\tParamètres : " << "somme des pions (-1 compté)=" << score << "\t, recherche interrompu=" << (i == t and j == 0 ? false : true); !(i == t and j == 0) ? cout << " à S[" << i << "][" << j << "] " : cout << ""; cout << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
+    // cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*score : score) << "\tParamètres : " << "somme des pions (-1 compté)=" << score << "\t, recherche interrompu=" << (i == t and j == 0 ? false : true); !(i == t and j == 0) ? cout << " à S[" << i << "][" << j << "] " : cout << ""; cout << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
     
     //Retour de fonction algorithme 2
     //Si nombre de pion noir suppérieur à la taille ('t'), on retourne le score doublé
@@ -601,7 +584,7 @@ tuple<int, int> pionsJaunes (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
+    // cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPionsIsole);
@@ -662,7 +645,7 @@ tuple<int, int> pionsVerts (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+    // cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPaire);
@@ -695,7 +678,7 @@ void calculeScore (solution & s, instance g)
     //Score des pions oranges, nombre de pénalité seulement (score = 0)
 
     //Débuggage
-    cout << "Débuggage fonction calculeScore() : \t" << "score sans penalité=" << score << "\t, nombre de pénalité=" << nbPenalite << endl;
+    // cout << "Débuggage fonction calculeScore() : \t" << "score sans penalité=" << score << "\t, nombre de pénalité=" << nbPenalite << endl;
 
     //Assignation du score final
     s.score = score - (nbPenalite * g.penalite);
@@ -723,9 +706,9 @@ int main ()
 
     //Initialisation de la solution (selectionner le moyen de l'initialisation)
     //Initialisation aléatoire
-    // genereSolutionAlea(b, a);
+    genereSolutionAlea(b, a);
     //Initialisation d'un fichier
-    lectureSolution(repSolution, b, a);
+    // lectureSolution(repSolution, b, a);
     //Initialisation par la saisie
     // saisieSolution(b, a);
 
