@@ -1,5 +1,8 @@
-# La Grille
+La Grille
+=============
 
+Comment lancer le programme ?
+-----------------------------------
 Pour lancer le programme, suivez les instructions suivantes :
 1. Télécharger le .zip du projet
 2. Ouvrir le main.cpp
