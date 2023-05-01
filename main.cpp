@@ -43,12 +43,12 @@ void initialisationInstance (string ficA, instance & g)
 
         //Création de la variable temporaire accueillant le nombre lu
         int nombre;
-
+        //Création deuxième dimension de la matrice grille (vecteur temporaire)
+        vector <int> temp;
         //Assignation de la grille
         for (int i = 0; i < t; ++i)
         {
-            //Création deuxième dimension de la matrice grille (vecteur temporaire)
-            vector <int> temp;
+            temp.clear();
             for (int j = 0; j < t; ++j)
             {
                 //Lecture du nombre (avec comme séparateur ' ')
@@ -57,11 +57,15 @@ void initialisationInstance (string ficA, instance & g)
                 temp.push_back(nombre);
             }
             //Création de la première dimension de la matrice grille (vecteur)
+            //Réduction de la taille du vecteur temporaire (optimisation)
+            temp.shrink_to_fit();
             g.matrice.push_back(temp);
         }
     }
     //Message d'erreur
     else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
+    //Réduction de la taille du vecteur matrice (optimisation)
+    g.matrice.shrink_to_fit();
 }
 
 //Afichage de la grille (fichier d'entrée)
@@ -130,6 +134,9 @@ void genereSolutionAlea (solution & s, instance g)
     //Création de la liste contenant les pions
     char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
 
+    //Création deuxième dimension de la matrice grille (vecteur temporaire)
+    vector <char> temp;
+
     //Génaration de la solution
     //Temps que la solution n'est pas valide on en génère
     do
@@ -138,19 +145,22 @@ void genereSolutionAlea (solution & s, instance g)
         s.matrice.clear();
         for (int i = 0; i < t; ++i)
         {
-            //Création deuxième dimension de la matrice grille (vecteur temporaire)
-            vector <char> temp;
+            temp.clear();
             for (int j = 0; j < t; ++j)
             {
                 //Assignation du pion aléatoirement parmis la liste des pions
                 temp.push_back(lettres[rand() % 6]);
             }
             //Création de la première dimension de la matrice grille (vecteur)
+            //Réduction de la taille du vecteur temporaire (optimisation)
+            temp.shrink_to_fit();
             s.matrice.push_back(temp);
         }
         //Débuggage
         //cout << "Débuggage fonction genereSolutionAlea() : \t" << "valide=" << (valide(s) == 1 ? true : false) << endl;
     } while (!valide(s));
+    //Réduction de la taille du vecteur matrice (optimisation)
+    s.matrice.shrink_to_fit();
 }
 
 //Saisie d'une solution manuellement
@@ -162,21 +172,27 @@ void saisieSolution (solution & s, instance g)
     
     //Création de la variable temporaire accueillant le caractère
     char lettre;
+    //Création deuxième dimension de la matrice grille (vecteur temporaire)
+    vector <char> temp;
+
     //Saisie de la matrice solution
     for (int i = 0; i < t; ++i)
     {
-        //Création deuxième dimension de la matrice grille (vecteur temporaire)
-        vector <char> temp;
+        temp.clear();
         for (int j = 0; j < t; ++j)
         {
             //Saisie assigné à la variable temporaire
             cin >> lettre;
+            //Réduction de la taille du vecteur temporaire (optimisation)
+            temp.shrink_to_fit();
             //Injection de la saisie dans le vecteur temporaire
             temp.push_back(lettre);
         }
         //Création de la première dimension de la matrice grille (vecteur)
         s.matrice.push_back(temp);
     }
+    //Réduction de la taille du vecteur matrice (optimisation)
+    s.matrice.shrink_to_fit();
 }
 
 //Lecture d'une matrice solution
@@ -194,22 +210,27 @@ void lectureSolution (string ficA, solution & s, instance g)
     {
         //Création de la variable temporaire accueillant le caractère lu
         char caractere;
+        //Création deuxième dimension de la matrice grille (vecteur temporaire)
+        vector<char> temp;
 
         //Assignation de la solution
         for (int i = 0; i < t; ++i)
         {
-            //Création deuxième dimension de la matrice grille (vecteur temporaire)
-            vector<char> temp;
+            temp.clear();
             for (int j = 0; j < t; ++j)
             {
                 //Lecture du caractère (avec comme séparateur ' ')
                 fichier >> caractere;
+                //Réduction de la taille du vecteur temporaire (optimisation)
+                temp.shrink_to_fit();
                 //Assignation du nombre lu dans le vecteur
                 temp.push_back(caractere);
             }
             //Création de la première dimension de la matrice grille (vecteur)
             s.matrice.push_back(temp);
         }
+        //Réduction de la taille du vecteur matrice (optimisation)
+        s.matrice.shrink_to_fit();
     }
     //Message d'erreur
     else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
@@ -681,9 +702,9 @@ int main ()
 
     //Initialisation de la solution (selectionner le moyen de l'initialisation)
     //Initialisation aléatoire
-    // genereSolutionAlea(b, a);
+    genereSolutionAlea(b, a);
     //Initialisation d'un fichier
-    lectureSolution(repSolution, b, a);
+    // lectureSolution(repSolution, b, a);
     //Initialisation par la saisie
     // saisieSolution(b, a);
 
