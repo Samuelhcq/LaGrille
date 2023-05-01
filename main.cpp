@@ -10,6 +10,8 @@
 //Pour renvoyer des tuples
 #include <tuple>
 #include <vector>
+//Mesurer le temps d'exécution
+#include <windows.h>
 
 //Déclaration des identificateurs
 using namespace std;
@@ -48,6 +50,7 @@ void initialisationInstance (string ficA, instance & g)
         //Assignation de la grille
         for (int i = 0; i < t; ++i)
         {
+            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
             temp.clear();
             for (int j = 0; j < t; ++j)
             {
@@ -145,6 +148,7 @@ void genereSolutionAlea (solution & s, instance g)
         s.matrice.clear();
         for (int i = 0; i < t; ++i)
         {
+            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
             temp.clear();
             for (int j = 0; j < t; ++j)
             {
@@ -178,6 +182,7 @@ void saisieSolution (solution & s, instance g)
     //Saisie de la matrice solution
     for (int i = 0; i < t; ++i)
     {
+        //Suppréssion des valeurs du vecteur temporaire (nécessaire)
         temp.clear();
         for (int j = 0; j < t; ++j)
         {
@@ -216,6 +221,7 @@ void lectureSolution (string ficA, solution & s, instance g)
         //Assignation de la solution
         for (int i = 0; i < t; ++i)
         {
+            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
             temp.clear();
             for (int j = 0; j < t; ++j)
             {
@@ -625,7 +631,6 @@ tuple<int, int> pionsVerts (solution s, instance g)
         }
     }
         
-
     //Suppréssion des doublons de paire
     //(int) assure la nature du nombre de paire (un entier)
     nbPaire = (int)nbPaire/2;
@@ -645,6 +650,114 @@ tuple<int, int> pionsVerts (solution s, instance g)
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPaire);
+}
+
+//Calcule la factoriel de x (utile pour binomialDe2())
+int factoriel (int x)
+{
+    int result = 1;
+
+    for (int i = 2; i <= x; ++i)
+    {
+        result *= i;
+    }
+
+    return result;
+}
+
+//Calcule le coefficient binomiale (n parmis 2)
+int binomialDe2 (int n)
+{
+    return factoriel(n)/(factoriel(n-2)*factoriel(2));
+}
+
+//Vérifie les pions orthogonalement
+bool pionOrthogonalOrange (vector <vector <int>> paire, solution s)
+{
+    if (paire[0][1] == paire[1][1]) return true;  //En dessous
+    if (paire[0][0] == paire[1][0]) return true; //A droite
+    
+    return false;
+}
+
+//Vérifie les pions en diagonale
+bool pionDiagonalOrange (vector <vector <int>> paire, solution s)
+{
+    int difference = paire[1][1] - paire[0][1];
+    
+    if (paire[0][0] == paire[1][0]-difference && paire[0][1] == paire[1][1]-difference) return true; //En bas à droite
+    if (paire[0][0] == paire[1][0]+difference && paire[0][1] == paire[1][1]-difference) return true; //En bas à gauche
+    
+    return false;
+}
+
+//Calcule score pions oranges
+int pionsOranges (solution s, instance g)
+{
+    //Création de la variable du nombre de pion orange ('nbPionOrange') et taille ('t')
+    int t = s.taille, nbPionOrange = 0;
+    //Création de la matrice à deux dimmenssion position (pion orange)
+    vector <vector <int>> position;
+
+    //Création deuxième dimension de la matrice position (vecteur temporaire)
+    vector <int> temp;
+    //Passage en revue de la solution
+    for (int i = 0; i < t; ++i)
+    {
+        for (int j = 0; j < t; ++j)
+        {
+            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
+            temp.clear();
+            //Si pion orange, on ajoute sa position a la matrice
+            if (s.matrice[i][j] == 'O')
+            {
+                temp = {i, j};
+                //Assignation du vecteur temporaire dans la matrice position
+                position.push_back(temp);
+                //Incrémentation du nombre de pion orange
+                nbPionOrange++;
+            }
+        }
+    }
+
+    //Passage en revue de position, pour vérifier si elles forment une paire pénalité
+    //Si moins de deux pions oranges impossibilité de vérifier
+    if (nbPionOrange >= 2)
+    {
+        //Création de la vairable nombre de paire possible ('nbPairePossible') et nombre de paire pénalité ('nbPaire')
+        int nbPairePossible = binomialDe2(nbPionOrange), nbPaire = 0;
+
+        //Création de la matrice à deux dimmenssion paire (pion orange)
+        vector <vector <vector <int>>> paireOrange;
+        //Création deuxième dimension de la matrice paire (vecteur temporaire)
+        vector <vector <int>> temp;
+        //Passage en revue des positions, pour former les paires (toute les permutations de la matrice position)
+        for (int j = 0; j < nbPionOrange-1; ++j)
+        {
+            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
+            temp.clear();
+            for (int h = j+1; h < nbPionOrange; ++h)
+            {
+                temp = {{position[j][0], position[j][1]}, {position[h][0], position[h][1]}};
+                //Assignation de la paire
+                paireOrange.push_back(temp);
+            }
+        }
+        //Si la paire est orthogonale ou diagonale on incrémente le nombre de paire pénalité
+        for (int i = 0; i < nbPairePossible; ++i)
+        {
+            if (pionDiagonalOrange(paireOrange[i], s) or pionOrthogonalOrange(paireOrange[i], s)) nbPaire++; 
+        }
+
+        // cout << "Score pions oranges : " << nbPaire * g.penalite << "\tParamètres : " << "nombre de paire possible(C(" << nbPionOrange << ", 2))=" << nbPairePossible << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+        return nbPaire;
+    }
+    
+    //Débuggage
+    //cout << "Score pions oranges : " << 0 << "\tParamètres : " << "nombre de paire possible(C(1, 2))= {}" << endl;
+    
+    //Aucune paire peut être formé alors aucune pénalité possible
+    return 0;
 }
 
 //Calcule du score final
@@ -672,6 +785,7 @@ void calculeScore (solution & s, instance g)
     tie(tempScore, tempNbPenalite) = pionsVerts(s, g);
     score += tempScore; nbPenalite += tempNbPenalite;
     //Score des pions oranges, nombre de pénalité seulement (score = 0)
+    nbPenalite += pionsOranges(s, g);
 
     //Débuggage
     // cout << "Débuggage fonction calculeScore() : \t" << "score sans penalité=" << score << "\t, nombre de pénalité=" << nbPenalite << endl;
