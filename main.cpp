@@ -361,7 +361,7 @@ int pionsBleus (solution s, instance g)
     //Optimiser si grande différence (avec 'd' comme référence)
     
     //Création des variables d'incrémentations ('i' et 'j'), de la variable case restante ('c') et valeur ('val') 
-    int i = 0, j = 0, c = t*t+1, val;
+    int i = 0, j = 0, c = t*t+1;
 
     //Passage en revue de la solution, pour calculer la différence 'd' (des pions bleus)
     //Arret du passage en revue dès que la différence est trop grande pour être rattrapée
@@ -805,9 +805,6 @@ int main ()
 
     LARGE_INTEGER debutExecution;
     LARGE_INTEGER finExecution;
-
-    //Début de la mesure du temps d'exécution
-    QueryPerformanceCounter(&debutExecution);
     
     //Chemin d'accès des fichiers d'entrées
     //Chemin de l'instance ('repInstance') et d'une solution ('repSolution')
@@ -823,6 +820,9 @@ int main ()
     initialisationInstance(repInstance, a);
     //Affichage de la grille
     affichageInstance(a);
+
+    //Début de la mesure du temps d'exécution
+    QueryPerformanceCounter(&debutExecution);
 
     //Initialisation de la solution (selectionner le moyen de l'initialisation)
     //Initialisation aléatoire
@@ -844,6 +844,6 @@ int main ()
     delta.QuadPart = finExecution.QuadPart - debutExecution.QuadPart;
 
     //Débuggage
-    cout << endl << "Durée de l'exécution : " << ((float)delta.QuadPart)/clockFrequency.QuadPart << 's' << endl;
+    cout << endl << "Durée de l'exécution : " << ((double)delta.QuadPart)/clockFrequency.QuadPart << 's' << endl;
     return 0;
 }
