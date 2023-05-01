@@ -799,6 +799,16 @@ int main ()
     //Nettoyage du termnial (affichage propre)
     system ("CLS");
     
+    //Permet de calculer la durée d'exécution du programme
+    LARGE_INTEGER clockFrequency;
+    QueryPerformanceFrequency(&clockFrequency);
+
+    LARGE_INTEGER debutExecution;
+    LARGE_INTEGER finExecution;
+
+    //Début de la mesure du temps d'exécution
+    QueryPerformanceCounter(&debutExecution);
+    
     //Chemin d'accès des fichiers d'entrées
     //Chemin de l'instance ('repInstance') et d'une solution ('repSolution')
     //Chemin d'une solution utile pour la fonction lectureSolution()
@@ -827,6 +837,13 @@ int main ()
     //Affichage de la solution avec le score
     affichageSolution(b);
 
+    //Début de la mesure du temps d'exécution
+    QueryPerformanceCounter(&finExecution);
+
+    LARGE_INTEGER delta;
+    delta.QuadPart = finExecution.QuadPart - debutExecution.QuadPart;
+
     //Débuggage
-    cout << endl << "Fin de l'éxecution." << endl;
+    cout << endl << "Durée de l'exécution : " << ((float)delta.QuadPart)/clockFrequency.QuadPart << 's' << endl;
+    return 0;
 }
