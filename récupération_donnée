@@ -1,0 +1,41 @@
+globale:
+score final
+valeur maximum grille
+valeur minimal grille
+valeur moyenne de la grille
+ecart type
+
+pour chaque pions:
+score
+score sans pénalité
+nombre de pénalité
+pourcentage du score
+pourcentage des pénalités
+
+jaunes:
+valeur case
+isolé ou pas
+
+verts:
+valeur case mère
+valeur de la somme des cases adjacentes orthogonalement
+nombre de paire adjecentes orthogonalement
+nombre de paire adjecentes en diagonale
+
+noirs:
+valeur de la somme des pions noirs moins 1
+doublé ou pas
+
+bleus:
+nombre péanilté bleus
+nombre de pion positif
+nombre de pino negatif
+difference
+
+orange:
+nombre pénalité orange
+nombre pion orange sur la meme ligne
+nombre pion orange sur la meme diagonale
+
+rouge:
+valeur case

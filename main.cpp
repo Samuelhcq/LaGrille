@@ -10,8 +10,6 @@
 //Pour renvoyer des tuples
 #include <tuple>
 #include <vector>
-//Mesurer le temps d'exécution
-#include <windows.h>
 
 //Déclaration des identificateurs
 using namespace std;
@@ -325,7 +323,7 @@ int pionsBleus (solution s, instance g)
     //Création de la variable différence entre le nombre de case strictement négatif et le nombre de case strictement positif ('d'), valeur ('val') et taille ('t')
     int d = 0, val, t = s.taille;
     //Débuggage
-    // int nbNegatif = 0, nbPositif = 0;
+    int nbNegatif = 0, nbPositif = 0;
 
     //Optimiser si petite différence (avec 'd' comme référence)
 
@@ -345,14 +343,14 @@ int pionsBleus (solution s, instance g)
                 {
                     d--;
                     //Débuggage
-                    // nbPositif++;
+                    nbPositif++;
                 }
                 //Nombre sctrictement négatif, incrémentation de la différence
                 if (val < 0) 
                 {   
                     d++;
                     //Débuggage
-                    // nbNegatif++;
+                    nbNegatif++;
                 }
             }
         }
@@ -406,7 +404,7 @@ int pionsBleus (solution s, instance g)
     */
 
     //Débuggage algorithme 1
-    // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
+    cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
     //Débuggage algorithme 2
     // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << "\t, arrêt du passage en revue à G[" << i << "][" << j << "]" << endl;
     
@@ -451,7 +449,7 @@ int pionRouge (solution s, instance g)
     int valPion = g.matrice[i][j];
 
     //Débuggage
-    // cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
+    cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
     
     //On retourne l'opposé de la valeur du pion rouge
     return -valPion;
@@ -484,7 +482,7 @@ int pionsNoirs (solution s, instance g)
         
 
     //Débuggage algorithme 1
-    // cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
+    cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
     
     //Retour de fonction algorithme 1
     //Si nombre de pion noir suppérieur à la taille ('t'), on retourne le score doublé (clacule du -1)
@@ -586,7 +584,7 @@ tuple<int, int> pionsJaunes (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    // cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
+    cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPionsIsole);
@@ -646,16 +644,16 @@ tuple<int, int> pionsVerts (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    // cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+    cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPaire);
 }
 
 //Calcule la factoriel de x (utile pour binomialDe2())
-int factoriel (int x)
+long long int factoriel (int x)
 {
-    int result = 1;
+    long long int result = 1;
 
     for (int i = 2; i <= x; ++i)
     {
@@ -666,7 +664,7 @@ int factoriel (int x)
 }
 
 //Calcule le coefficient binomiale (n parmis 2)
-int binomialDe2 (int n)
+float binomialDe2 (int n)
 {
     return factoriel(n)/(factoriel(n-2)*factoriel(2));
 }
@@ -725,7 +723,8 @@ int pionsOranges (solution s, instance g)
     if (nbPionOrange >= 2)
     {
         //Création de la vairable nombre de paire possible ('nbPairePossible') et nombre de paire pénalité ('nbPaire')
-        int nbPairePossible = binomialDe2(nbPionOrange), nbPaire = 0;
+        float nbPairePossible = binomialDe2(nbPionOrange);
+        int nbPaire = 0;
 
         //Création de la matrice à deux dimmenssion paire (pion orange)
         vector <vector <vector <int>>> paireOrange;
@@ -749,12 +748,12 @@ int pionsOranges (solution s, instance g)
             if (pionDiagonalOrange(paireOrange[i], s) or pionOrthogonalOrange(paireOrange[i], s)) nbPaire++; 
         }
 
-        // cout << "Score pions oranges : " << nbPaire * g.penalite << "\tParamètres : " << "nombre de paire possible(C(" << nbPionOrange << ", 2))=" << nbPairePossible << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+        cout << "Score pions oranges : " << nbPaire * g.penalite << "\tParamètres : " << "nombre de paire possible(C(" << nbPionOrange << ", 2))=" << nbPairePossible << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
         return nbPaire;
     }
     
     //Débuggage
-    //cout << "Score pions oranges : " << 0 << "\tParamètres : " << "nombre de paire possible(C(1, 2))= {}" << endl;
+    cout << "Score pions oranges : " << 0 << "\tParamètres : " << "nombre de paire possible(C(1, 2))= {}" << endl;
     
     //Aucune paire peut être formé alors aucune pénalité possible
     return 0;
@@ -798,18 +797,11 @@ int main ()
 {
     //Nettoyage du termnial (affichage propre)
     system ("CLS");
-    
-    //Permet de calculer la durée d'exécution du programme
-    LARGE_INTEGER clockFrequency;
-    QueryPerformanceFrequency(&clockFrequency);
 
-    LARGE_INTEGER debutExecution;
-    LARGE_INTEGER finExecution;
-    
     //Chemin d'accès des fichiers d'entrées
     //Chemin de l'instance ('repInstance') et d'une solution ('repSolution')
     //Chemin d'une solution utile pour la fonction lectureSolution()
-    string repInstance = "Instances/exemple_1.txt", repSolution = "Solutions/solution_2.txt";
+    string repInstance = "Instances/probleme_10_a.txt", repSolution = "Solutions/solution_10_a.txt";
 
     //Création de la variable grille (fichier d'entrée)
     instance a;
@@ -821,9 +813,6 @@ int main ()
     //Affichage de la grille
     affichageInstance(a);
 
-    //Début de la mesure du temps d'exécution
-    QueryPerformanceCounter(&debutExecution);
-
     //Initialisation de la solution (selectionner le moyen de l'initialisation)
     //Initialisation aléatoire
     genereSolutionAlea(b, a);
@@ -834,16 +823,11 @@ int main ()
 
     //Calcule du score de la solution
     calculeScore(b, a);
+
     //Affichage de la solution avec le score
     affichageSolution(b);
 
-    //Début de la mesure du temps d'exécution
-    QueryPerformanceCounter(&finExecution);
-
-    LARGE_INTEGER delta;
-    delta.QuadPart = finExecution.QuadPart - debutExecution.QuadPart;
-
-    //Débuggage
-    cout << endl << "Durée de l'exécution : " << ((double)delta.QuadPart)/clockFrequency.QuadPart << 's' << endl;
+    // //Débuggage
+    // cout << endl << "Fin exécution." << endl;
     return 0;
 }
