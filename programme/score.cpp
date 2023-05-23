@@ -1,268 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-//??
-#include <cstdlib>
-//Pour la génération de grille aléatoire
-#include <ctime>
-//Pour clear le terminal
-#include <stdlib.h>
-//Pour renvoyer des tuples
-#include <tuple>
-#include <vector>
-
-//Déclaration des identificateurs
-using namespace std;
-
-//Déclaration des structures de données d'entrée et de sortie
-struct instance
-{
-    int taille, penalite;
-    vector <vector <int>> matrice;
-};
-
-struct solution
-{
-    int taille, score;
-    vector <vector <char>> matrice;
-};
-
-//Initialisation du fichier d'entrée
-void initialisationInstance (string ficA, instance & g)
-{
-    //Ouverture du fichier
-    ifstream fichier(ficA);
-    
-    //Lecture du fichier
-    if (fichier)
-    {
-        //Assignation de la taille de la grille et de la valeur des pénalités
-        int t;
-        fichier >> t; g.taille = t;
-        fichier >> g.penalite;
-
-        //Création de la variable temporaire accueillant le nombre lu
-        int nombre;
-        //Création deuxième dimension de la matrice grille (vecteur temporaire)
-        vector <int> temp;
-        //Assignation de la grille
-        for (int i = 0; i < t; ++i)
-        {
-            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
-            temp.clear();
-            for (int j = 0; j < t; ++j)
-            {
-                //Lecture du nombre (avec comme séparateur ' ')
-                fichier >> nombre;
-                //Assignation du nombre lu dans le vecteur
-                temp.push_back(nombre);
-            }
-            //Création de la première dimension de la matrice grille (vecteur)
-            //Réduction de la taille du vecteur temporaire (optimisation)
-            temp.shrink_to_fit();
-            g.matrice.push_back(temp);
-        }
-    }
-    //Message d'erreur
-    else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
-    //Réduction de la taille du vecteur matrice (optimisation)
-    g.matrice.shrink_to_fit();
-}
-
-//Afichage de la grille (fichier d'entrée)
-void affichageInstance (instance g)
-{
-    //Création de la variable taille
-    int t = g.taille;
-    
-    //Affichage de la taille de la grille
-    cout << t << ' ' << g.penalite;
-
-    //Affichage de la grille
-    for (int i = 0; i < t; ++i)
-    {
-        cout << endl;
-        for (int j = 0; j < t; ++j)
-        {
-            cout << g.matrice[i][j] << "\t";
-        }
-    }
-    cout << endl;
-}
-
-//Vérification de la validitée de la solution
-bool valide (solution s)
-{
-    //Création de la varible nombre pion rouge ('nbPionRouge'), d'incrémentations ('i' et 'j') et taille ('t')
-    int nbPionRouge = 0, i = 0, j = 0, t = s.taille;
-
-    //Passage en revue de la solution, pour compter le nombre de pion rouge
-    //Arrêt du passage en revue dès que le nombre de pion dépasse 2
-    while (nbPionRouge < 2 and i < t)
-    {
-        do
-        {
-            //Si pion rouge, incrémentation du nombre de pion rouge
-            if (s.matrice[i][j++] == 'R') nbPionRouge++;
-        }
-        while (nbPionRouge < 2 and j < t);
-
-        //Débuggage (la condition)
-        // if (nbPionRouge < 2)
-        // {
-            j = 0;
-            i++;
-        // }
-    }
-    //Débuggage
-    //cout << "Débuggage fonction valide() : \t" << "fin de recherche de la validité à S[" << i << "][" << j << "]" << ",\t nombre de pion rouge=" << nbPionRouge << endl;
-
-    //Si le nombre de pion rouge est égal à 1 alors la solution est valdie
-    return nbPionRouge == 1;
-}
-
-//Génération d'une solution aléatoirement
-//Utile pour le débuggage de la fonction calculeScore()
-void genereSolutionAlea (solution & s, instance g)
-{
-    //Création de la variable taille
-    int t = g.taille;
-    s.taille = t;
-    
-    //Sélection d'une seed aléatoirement (avec le module 'ctime')
-    srand(time(NULL));
-    
-    //Création de la liste contenant les pions
-    char lettres[] = {'J', 'V', 'N', 'B', 'O', 'R'}; 
-
-    //Création deuxième dimension de la matrice grille (vecteur temporaire)
-    vector <char> temp;
-
-    //Génaration de la solution
-    //Temps que la solution n'est pas valide on en génère
-    do
-    {
-        //Supprésion du vecteur
-        s.matrice.clear();
-        for (int i = 0; i < t; ++i)
-        {
-            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
-            temp.clear();
-            for (int j = 0; j < t; ++j)
-            {
-                //Assignation du pion aléatoirement parmis la liste des pions
-                temp.push_back(lettres[rand() % 6]);
-            }
-            //Création de la première dimension de la matrice grille (vecteur)
-            //Réduction de la taille du vecteur temporaire (optimisation)
-            temp.shrink_to_fit();
-            s.matrice.push_back(temp);
-        }
-        //Débuggage
-        //cout << "Débuggage fonction genereSolutionAlea() : \t" << "valide=" << (valide(s) == 1 ? true : false) << endl;
-    } while (!valide(s));
-    //Réduction de la taille du vecteur matrice (optimisation)
-    s.matrice.shrink_to_fit();
-}
-
-//Saisie d'une solution manuellement
-void saisieSolution (solution & s, instance g)
-{
-    //Assignation de la variable taille
-    int t = g.taille;
-    s.taille = t;
-    
-    //Création de la variable temporaire accueillant le caractère
-    char lettre;
-    //Création deuxième dimension de la matrice grille (vecteur temporaire)
-    vector <char> temp;
-
-    //Saisie de la matrice solution
-    for (int i = 0; i < t; ++i)
-    {
-        //Suppréssion des valeurs du vecteur temporaire (nécessaire)
-        temp.clear();
-        for (int j = 0; j < t; ++j)
-        {
-            //Saisie assigné à la variable temporaire
-            cin >> lettre;
-            //Réduction de la taille du vecteur temporaire (optimisation)
-            temp.shrink_to_fit();
-            //Injection de la saisie dans le vecteur temporaire
-            temp.push_back(lettre);
-        }
-        //Création de la première dimension de la matrice grille (vecteur)
-        s.matrice.push_back(temp);
-    }
-    //Réduction de la taille du vecteur matrice (optimisation)
-    s.matrice.shrink_to_fit();
-}
-
-//Lecture d'une matrice solution
-void lectureSolution (string ficA, solution & s, instance g)
-{
-    //Création de la variable taille
-    int t = g.taille;
-    s.taille = t;
-    
-    //Ouverture du fichier
-    ifstream fichier(ficA);
-
-    //Lecture du fichier
-    if (fichier)
-    {
-        //Création de la variable temporaire accueillant le caractère lu
-        char caractere;
-        //Création deuxième dimension de la matrice grille (vecteur temporaire)
-        vector<char> temp;
-
-        //Assignation de la solution
-        for (int i = 0; i < t; ++i)
-        {
-            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
-            temp.clear();
-            for (int j = 0; j < t; ++j)
-            {
-                //Lecture du caractère (avec comme séparateur ' ')
-                fichier >> caractere;
-                //Réduction de la taille du vecteur temporaire (optimisation)
-                temp.shrink_to_fit();
-                //Assignation du nombre lu dans le vecteur
-                temp.push_back(caractere);
-            }
-            //Création de la première dimension de la matrice grille (vecteur)
-            s.matrice.push_back(temp);
-        }
-        //Réduction de la taille du vecteur matrice (optimisation)
-        s.matrice.shrink_to_fit();
-    }
-    //Message d'erreur
-    else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
-
-    //Débuggage
-    //cout << "Débuggage fonction lectureSolution() : \t" << "valide=" << (valide(s) == 1 ? true : false) << endl;
-}
-
-//Afichage de la solution (fichier de sortie)
-void affichageSolution (solution s)
-{
-    //Création de la variable taille
-    int t = s.taille;
-    
-    //Affichage de la solution
-    for (int i = 0; i < t; ++i)
-    {
-        cout << endl;
-        for (int j = 0; j < t; ++j)
-        {
-            cout << s.matrice[i][j] << "\t";
-        }
-    }
-    cout << endl;
-
-    //Affichage du score de la solution
-    cout << endl << "Score final : " << s.score << endl;
-}
+#include "score.h"
+#include "common.h"
 
 //Vérifie les pions adjacents orthogonalements
 bool pionOrthogonal (solution s, char l, int i, int j)
@@ -323,7 +60,7 @@ int pionsBleus (solution s, instance g)
     //Création de la variable différence entre le nombre de case strictement négatif et le nombre de case strictement positif ('d'), valeur ('val') et taille ('t')
     int d = 0, val, t = s.taille;
     //Débuggage
-    int nbNegatif = 0, nbPositif = 0;
+    // int nbNegatif = 0, nbPositif = 0;
 
     //Optimiser si petite différence (avec 'd' comme référence)
 
@@ -343,14 +80,14 @@ int pionsBleus (solution s, instance g)
                 {
                     d--;
                     //Débuggage
-                    nbPositif++;
+                    // nbPositif++;
                 }
                 //Nombre sctrictement négatif, incrémentation de la différence
                 if (val < 0) 
                 {   
                     d++;
                     //Débuggage
-                    nbNegatif++;
+                    // nbNegatif++;
                 }
             }
         }
@@ -404,7 +141,7 @@ int pionsBleus (solution s, instance g)
     */
 
     //Débuggage algorithme 1
-    cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
+    // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << endl;
     //Débuggage algorithme 2
     // cout << "Score pions bleus : " << (d > 0 ? -d*g.penalite : 0) << "\tParamètres : " << "nombres positifs=" << nbPositif << "\t, nombre négatifs=" << nbNegatif << "\t, difference (négatifs-positifs)=" << d << "\t, arrêt du passage en revue à G[" << i << "][" << j << "]" << endl;
     
@@ -449,7 +186,7 @@ int pionRouge (solution s, instance g)
     int valPion = g.matrice[i][j];
 
     //Débuggage
-    cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
+    // cout << "Score pion rouge : " << -valPion << ' ' << "\tParamètres : " << "pion trouvé à S[" << i << "][" << j << "] " << "\t, valeur du pion rouge=" << valPion << endl;
     
     //On retourne l'opposé de la valeur du pion rouge
     return -valPion;
@@ -482,7 +219,7 @@ int pionsNoirs (solution s, instance g)
         
 
     //Débuggage algorithme 1
-    cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
+    // cout << "Score pions noirs : " << (nbPionNoir <= t ? 2*(score-nbPionNoir) : score-nbPionNoir) << "\tParamètres : " << "somme des pions (-1 compté)=" << score-nbPionNoir << "\t, doublé=" <<(nbPionNoir <= t ? true : false) << endl;
     
     //Retour de fonction algorithme 1
     //Si nombre de pion noir suppérieur à la taille ('t'), on retourne le score doublé (clacule du -1)
@@ -584,7 +321,7 @@ tuple<int, int> pionsJaunes (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
+    // cout << "Projection du score pions jaunes : " << score - nbPionsIsole * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de pion isolé(nombre de pénalité)=" << nbPionsIsole << endl;
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPionsIsole);
@@ -617,21 +354,13 @@ tuple<int, int> pionsVerts (solution s, instance g)
                 //Calcule du nombre de paire
                 //Ajout du nombre de paire orthogonalement
                 if (j > 0 && s.matrice[i][j-1] == 'V') nbPaire++; //En dessous
-                if (j < s.taille-1 && s.matrice[i][j+1] == 'V') nbPaire++; //Au dessus
-                if (i > 0 && s.matrice[i-1][j] == 'V') nbPaire++; //A gauche
                 if (i < s.taille-1 && s.matrice[i+1][j] == 'V') nbPaire++; //A droite
                 //Ajout du nombre de paire en diagonale
                 if (i > 0 && j > 0 && s.matrice[i-1][j-1] == 'V') nbPaire++; //En bas à gauche
                 if (i > 0 && j < s.taille-1 && s.matrice[i-1][j+1] == 'V') nbPaire++; //En bas à droite
-                if (i < s.taille-1 && j > 0 && s.matrice[i+1][j-1] == 'V') nbPaire++; //En haut à gauche
-                if (i < s.taille-1 && j < s.taille-1 && s.matrice[i+1][j+1] == 'V') nbPaire++; //En haut à droite
             }
         }
     }
-        
-    //Suppréssion des doublons de paire
-    //(int) assure la nature du nombre de paire (un entier)
-    nbPaire = (int)nbPaire/2;
 
     //Sans utiliser les tuples
     /*
@@ -644,7 +373,7 @@ tuple<int, int> pionsVerts (solution s, instance g)
 
     //En utilisant les tuples
     //Débuggage
-    cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+    // cout << "Projection du score pions verts : " << score - nbPaire * g.penalite << "\tParamètres : " << "somme des pions=" << score << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
     
     //Retourne le score (sans pénalité) et le nombre de pénalité
     return make_tuple(score, nbPaire);
@@ -748,12 +477,12 @@ int pionsOranges (solution s, instance g)
             if (pionDiagonalOrange(paireOrange[i], s) or pionOrthogonalOrange(paireOrange[i], s)) nbPaire++; 
         }
 
-        cout << "Score pions oranges : " << nbPaire * g.penalite << "\tParamètres : " << "nombre de paire possible(C(" << nbPionOrange << ", 2))=" << nbPairePossible << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
+        // cout << "Score pions oranges : " << nbPaire * g.penalite << "\tParamètres : " << "nombre de paire possible(C(" << nbPionOrange << ", 2))=" << nbPairePossible << "\t, nombre de paire(nombre de pénalité)=" << nbPaire << endl;    
         return nbPaire;
     }
     
     //Débuggage
-    cout << "Score pions oranges : " << 0 << "\tParamètres : " << "nombre de paire possible(C(1, 2))= {}" << endl;
+    // cout << "Score pions oranges : " << 0 << "\tParamètres : " << "nombre de paire possible(C(1, 2))= {}" << endl;
     
     //Aucune paire peut être formé alors aucune pénalité possible
     return 0;
@@ -776,10 +505,14 @@ void calculeScore (solution & s, instance g)
     //Score des pions noirs, score seulement (nombre de pénalité = 0)
     score += pionsNoirs (s, g);
     //Score des pions jaunes, score et nombre de pénalité
+    //Sans tuples
+    // score += pionsJaunes(s, g);
     //Utilisation des tuples
     tie(tempScore, tempNbPenalite) = pionsJaunes(s, g);
     score += tempScore; nbPenalite += tempNbPenalite;
     //Score des pions verts, score et nombre de pénalité
+    //Sans tuples
+    // score += pionsVerts(s, g);
     //Utilisation des tuples
     tie(tempScore, tempNbPenalite) = pionsVerts(s, g);
     score += tempScore; nbPenalite += tempNbPenalite;
@@ -791,43 +524,4 @@ void calculeScore (solution & s, instance g)
 
     //Assignation du score final
     s.score = score - (nbPenalite * g.penalite);
-}
-
-int main ()
-{
-    //Nettoyage du termnial (affichage propre)
-    system ("CLS");
-
-    //Chemin d'accès des fichiers d'entrées
-    //Chemin de l'instance ('repInstance') et d'une solution ('repSolution')
-    //Chemin d'une solution utile pour la fonction lectureSolution()
-    string repInstance = "Instances/probleme_10_a.txt", repSolution = "Solutions/solution_10_a.txt";
-
-    //Création de la variable grille (fichier d'entrée)
-    instance a;
-    //Création de la variable solution (fichier de sortie)
-    solution b;
-
-    //Initialisation de la grille
-    initialisationInstance(repInstance, a);
-    //Affichage de la grille
-    affichageInstance(a);
-
-    //Initialisation de la solution (selectionner le moyen de l'initialisation)
-    //Initialisation aléatoire
-    genereSolutionAlea(b, a);
-    //Initialisation d'un fichier
-    // lectureSolution(repSolution, b, a);
-    //Initialisation par la saisie
-    // saisieSolution(b, a);
-
-    //Calcule du score de la solution
-    calculeScore(b, a);
-
-    //Affichage de la solution avec le score
-    affichageSolution(b);
-
-    // //Débuggage
-    // cout << endl << "Fin exécution." << endl;
-    return 0;
 }

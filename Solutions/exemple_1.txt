@@ -1,0 +1,4 @@
+V N V N
+N B B B
+R B B O
+O B V N
