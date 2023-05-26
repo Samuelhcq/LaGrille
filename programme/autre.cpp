@@ -6,37 +6,6 @@
 //Lire des fichiers
 #include <fstream>
 
-//Vérification de la validitée de la solution
-bool valide (solution s)
-{
-    //Création de la varible nombre pion rouge ('nbPionRouge'), d'incrémentations ('i' et 'j') et taille ('t')
-    int nbPionRouge = 0, i = 0, j = 0, t = s.taille;
-
-    //Passage en revue de la solution, pour compter le nombre de pion rouge
-    //Arrêt du passage en revue dès que le nombre de pion dépasse 2
-    while (nbPionRouge < 2 and i < t)
-    {
-        do
-        {
-            //Si pion rouge, incrémentation du nombre de pion rouge
-            if (s.matrice[i][j++] == 'R') nbPionRouge++;
-        }
-        while (nbPionRouge < 2 and j < t);
-
-        //Débuggage (la condition)
-        // if (nbPionRouge < 2)
-        // {
-            j = 0;
-            i++;
-        // }
-    }
-    //Débuggage
-    //cout << "Débuggage fonction valide() : \t" << "fin de recherche de la validité à S[" << i << "][" << j << "]" << ",\t nombre de pion rouge=" << nbPionRouge << endl;
-
-    //Si le nombre de pion rouge est égal à 1 alors la solution est valdie
-    return nbPionRouge == 1;
-}
-
 //Génération d'une solution aléatoirement
 //Utile pour le débuggage de la fonction calculeScore()
 void genereSolutionAlea (solution & s, instance g)

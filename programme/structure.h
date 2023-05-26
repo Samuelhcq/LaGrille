@@ -18,3 +18,4 @@ void initialisationInstance (string ficA, instance & g);
 void affichageInstance (instance g);
 void affichageSolution (solution s);
 void ecriture (string ficA, solution s);
+bool valide (solution s);

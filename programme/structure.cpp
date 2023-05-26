@@ -6,58 +6,36 @@
 #include <string>
 #include <vector>
 
-//Initialisation du fichier d'entrée
-void initialisationInstance (string ficA, instance & g)
+void initialisationInstance (string ficA, instance & g) //Initialisation du fichier d'entrée
 {
-    //Ouverture du fichier
     ifstream fichier(ficA);
-    
-    //Lecture du fichier
     if (fichier)
     {
-        //Assignation de la taille de la grille et de la valeur des pénalités
         int t;
         fichier >> t; g.taille = t;
         fichier >> g.penalite;
-
-        //Création de la variable temporaire accueillant le nombre lu
         int nombre;
-        //Création deuxième dimension de la matrice grille (vecteur temporaire)
         vector <int> temp;
-        //Assignation de la grille
         for (int i = 0; i < t; ++i)
         {
-            //Suppréssion des valeurs du vecteur temporaire (nécessaire)
             temp.clear();
             for (int j = 0; j < t; ++j)
             {
-                //Lecture du nombre (avec comme séparateur ' ')
                 fichier >> nombre;
-                //Assignation du nombre lu dans le vecteur
                 temp.push_back(nombre);
             }
-            //Création de la première dimension de la matrice grille (vecteur)
-            //Réduction de la taille du vecteur temporaire (optimisation)
             temp.shrink_to_fit();
             g.matrice.push_back(temp);
         }
     }
-    //Message d'erreur
     else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être lu !" << endl;
-    //Réduction de la taille du vecteur matrice (optimisation)
     g.matrice.shrink_to_fit();
 }
 
-//Afichage de la grille (fichier d'entrée)
-void affichageInstance (instance g)
+void affichageInstance (instance g) //Afichage de la grille (fichier d'entrée)
 {
-    //Création de la variable taille
     int t = g.taille;
-    
-    //Affichage de la taille de la grille
     cout << t << ' ' << g.penalite;
-
-    //Affichage de la grille
     for (int i = 0; i < t; ++i)
     {
         cout << endl;
@@ -69,13 +47,9 @@ void affichageInstance (instance g)
     cout << endl;
 }
 
-//Afichage de la solution (fichier de sortie)
-void affichageSolution (solution s)
+void affichageSolution (solution s) //Afichage de la solution (fichier de sortie)
 {
-    //Création de la variable taille
     int t = s.taille;
-    
-    //Affichage de la solution
     for (int i = 0; i < t; ++i)
     {
         cout << endl;
@@ -84,13 +58,26 @@ void affichageSolution (solution s)
             cout << s.matrice[i][j] << "\t";
         }
     }
-    cout << endl;
-
-    //Affichage du score de la solution
-    cout << endl << "Score final : " << s.score << endl;
+    cout << endl << s.score << endl;
 }
 
-void ecriture (string ficA, solution s)
+bool valide (solution s) //Vérification de la validitée de la solution
+{
+    int nbPionRouge = 0, i = 0, j = 0, t = s.taille;
+    while (nbPionRouge < 2 and i < t)
+    {
+        do
+        {
+            if (s.matrice[i][j++] == 'R') nbPionRouge++;
+        }
+        while (nbPionRouge < 2 and j < t);
+        j = 0;
+        i++;
+    }
+    return nbPionRouge == 1;
+}
+
+void ecriture (string ficA, solution s) //Écrit la solution dans un fichier
 {
     ofstream fichier(ficA);
 
@@ -106,6 +93,7 @@ void ecriture (string ficA, solution s)
             }
             fichier << endl;
         }
+        fichier<<s.score;
         fichier.close();
     }
     else cerr << "Erreur : le fichier '" << ficA << "' ne peut pas être ouvert pour l'écriture !" << endl;

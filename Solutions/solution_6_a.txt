@@ -1,6 +1,0 @@
-B N N V B V
-J J J O N B
-J O O B J J
-J N O J J N
-N N V V N R
-J N O V O N
